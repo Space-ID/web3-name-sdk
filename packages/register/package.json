@@ -1,0 +1,22 @@
+{
+  "name": "@web3-name-sdk/register",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@siddomains/sidjs": "0.1.25",
+    "ethers": "^5.7.2"
+  },
+  "peerDependencies": {
+    "@siddomains/sidjs": "0.1.25",
+    "ethers": "^5.7.2"
+  },
+  "dependencies": {
+    "@siddomains/sid-contracts": "^0.1.30"
+  }
+}
