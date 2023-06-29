@@ -8,34 +8,28 @@ const emptySignature = [
   '0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
 ]
 
-function getGraphQLUrl(chainId) {
+function getApiUrl(chainId) {
   if (chainId === 56 || chainId === 42161) {
-    return 'https://graphigo.prd.space.id/query'
+    return 'https://api.space.id/v1/sign-referral'
   }
-  return 'https://graphigo.dev.space.id/query'
+  return 'https://api.stg.space.id/v1/sign-referral'
 }
 
 export async function getReferralSignature(domain, chainId) {
   if (!domain || !chainId) return emptySignature
   try {
-    const res = await fetch(getGraphQLUrl(chainId), {
+    const res = await fetch(getApiUrl(chainId), {
       method: 'POST',
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        query: `{
-                        signReferral(domain:"${domain}", chainId: ${chainId}) {
-                            signature
-                            referrerAddress
-                            signedAt
-                            referrerCount
-                        }
-                    }`
+        domain,
+        chainId,
       })
     })
     const resJson = await res.json()
-    const signReferral = resJson?.data?.signReferral
+    const signReferral = resJson?.data
     if (signReferral) {
       return [
         signReferral.referrerAddress,

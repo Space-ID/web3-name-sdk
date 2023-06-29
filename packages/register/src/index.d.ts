@@ -1,6 +1,22 @@
+import { Signer } from 'ethers'
 
+type SupportedChainId = 1 | 56 | 42161 | 97 | 421613
 
-export type RegisterOptions = {
+type SIDRegisterOptions = {
+  signer: Signer,
+  sidAddress?: string,
+  chainId: SupportedChainId,
+}
+
+type RegisterOptions = {
   referrer?: string;
-  setPrimaryName?: boolean
+  setPrimaryName?: boolean;
+  onCommitSuccess?: (waitTime: number) => Promise<void>;
+}
+
+
+export {
+  SIDRegisterOptions,
+  RegisterOptions,
+  SupportedChainId
 }
