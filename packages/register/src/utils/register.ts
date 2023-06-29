@@ -1,4 +1,4 @@
-import {utils, BigNumber} from "ethers";
+import { utils, BigNumber } from 'ethers'
 
 export const yearInSeconds = 31556952
 

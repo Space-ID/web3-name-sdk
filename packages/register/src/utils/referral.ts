@@ -1,4 +1,4 @@
-import {namehash} from "@siddomains/sidjs";
+import { namehash } from '@siddomains/sidjs'
 
 const emptySignature = [
   '0x0000000000000000000000000000000000000000',
@@ -21,12 +21,12 @@ export async function getReferralSignature(domain, chainId) {
     const res = await fetch(getApiUrl(chainId), {
       method: 'POST',
       headers: {
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         domain,
         chainId,
-      })
+      }),
     })
     const resJson = await res.json()
     const signReferral = resJson?.data

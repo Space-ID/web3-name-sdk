@@ -32,7 +32,6 @@ const getTldByChainId = (chainId: SupportedChainId) => {
   }
 }
 
-
 class SIDRegister {
   private readonly sidAddress: string
   private readonly signer: Signer
@@ -50,13 +49,26 @@ class SIDRegister {
 
   async getRegistrarController() {
     if (!this.registrarController) {
-      const sidContract = getSIDContract({ address: this.sidAddress, provider: this.signer.provider })
+      const sidContract = getSIDContract({
+        address: this.sidAddress,
+        provider: this.signer.provider,
+      })
       const hash = namehash(getTldByChainId(this.chainId))
       const resolverAddr = await sidContract.resolver(hash)
-      const resolverContract = getResolverContract({ address: resolverAddr, provider: this.signer.provider })
-      const registrarControllerAddr = await resolverContract.interfaceImplementer(hash, interfaces.permanentRegistrar)
+      const resolverContract = getResolverContract({
+        address: resolverAddr,
+        provider: this.signer.provider,
+      })
+      const registrarControllerAddr = await resolverContract.interfaceImplementer(
+        hash,
+        interfaces.permanentRegistrar
+      )
       if (this.chainId === 1) {
-        this.registrarController = new Contract(registrarControllerAddr, ensRegisterAbi, this.signer)
+        this.registrarController = new Contract(
+          registrarControllerAddr,
+          ensRegisterAbi,
+          this.signer
+        )
       } else {
         this.registrarController = getRegistrarControllerContract({
           address: registrarControllerAddr,
@@ -94,7 +106,6 @@ class SIDRegister {
   }
 
   async register(label: string, address: string, year: number, options?: RegisterOptions) {
-
     const referrer = options?.referrer
     const setPrimaryName = options?.setPrimaryName
 
@@ -109,7 +120,13 @@ class SIDRegister {
 
     const secret = genCommitSecret()
     if (this.chainId === 1) {
-      const commitment = await registrarController.makeCommitmentWithConfig(normalizedName, address, secret, publicResolver, address)
+      const commitment = await registrarController.makeCommitmentWithConfig(
+        normalizedName,
+        address,
+        secret,
+        publicResolver,
+        address
+      )
       const tx = await registrarController?.commit(commitment)
       await tx?.wait()
       const checkRes = await registrarController?.commitments(commitment)
@@ -130,9 +147,17 @@ class SIDRegister {
 
     let tx: ContractTransaction
     if (this.chainId === 1) {
-      const gas = await registrarController.estimateGas?.registerWithConfig(normalizedName, address, duration, secret, publicResolver, address, {
-        value: bufferedPrice,
-      })
+      const gas = await registrarController.estimateGas?.registerWithConfig(
+        normalizedName,
+        address,
+        duration,
+        secret,
+        publicResolver,
+        address,
+        {
+          value: bufferedPrice,
+        }
+      )
       const gasLimit = (gas ?? BigNumber.from(0)).add(21000)
       tx = await registrarController?.registerWithConfig(
         normalizedName,
@@ -144,18 +169,36 @@ class SIDRegister {
         {
           value: bufferedPrice,
           gasLimit: gasLimit ? BigNumber.from(gasLimit) : undefined,
-        },
+        }
       )
     } else {
       const referralSign = await getReferralSignature(referrer, this.chainId)
-      const gas = await registrarController.estimateGas?.registerWithConfigAndPoint(normalizedName, address, duration, publicResolver, false, setPrimaryName, referralSign, {
-        value: bufferedPrice,
-      })
+      const gas = await registrarController.estimateGas?.registerWithConfigAndPoint(
+        normalizedName,
+        address,
+        duration,
+        publicResolver,
+        false,
+        setPrimaryName,
+        referralSign,
+        {
+          value: bufferedPrice,
+        }
+      )
       const gasLimit = (gas ?? BigNumber.from(0)).add(21000)
-      tx = await registrarController.registerWithConfigAndPoint(normalizedName, address, duration, publicResolver, false, setPrimaryName, referralSign, {
-        value: bufferedPrice,
-        gasLimit,
-      })
+      tx = await registrarController.registerWithConfigAndPoint(
+        normalizedName,
+        address,
+        duration,
+        publicResolver,
+        false,
+        setPrimaryName,
+        referralSign,
+        {
+          value: bufferedPrice,
+          gasLimit,
+        }
+      )
     }
     await tx.wait()
     return normalizedName
