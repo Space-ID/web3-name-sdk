@@ -1221,7 +1221,7 @@
   resolved "https://registry.yarnpkg.com/@siddomains/resolver/-/resolver-0.1.1.tgz#5ee3921fe9d5a10814ff6635710dbd7af3b024b0"
   integrity sha512-cZYaHJN9iXNXeLvaMPDm3p6ymNklDzQ11reIfLMvLi0zP0UGERM+YXCqwzAZkoKulysVWX0iUbihl64/NrJJew==
 
-"@siddomains/sid-contracts@0.1.30":
+"@siddomains/sid-contracts@0.1.30", "@siddomains/sid-contracts@^0.1.30":
   version "0.1.30"
   resolved "https://registry.yarnpkg.com/@siddomains/sid-contracts/-/sid-contracts-0.1.30.tgz#4115a74a9bc55128b6911ca031670bad7b163199"
   integrity sha512-j7+a0sFLperhwB2s/B7ntEMrB9epmOyEX4q4Jml+p94/qveLkyfryKCpQG6d70ZnDVzdLOWGBzYK5gYPS/IMhw==
@@ -2185,6 +2185,12 @@
   dependencies:
     "@walletconnect/window-getters" "^1.0.1"
     tslib "1.14.1"
+
+"@web3-name-sdk/register@../../packages/register/":
+  version "0.0.1"
+  dependencies:
+    "@siddomains/sid-contracts" "^0.1.30"
+    ethers "^5.7.2"
 
 "@web3modal/core@2.4.3":
   version "2.4.3"

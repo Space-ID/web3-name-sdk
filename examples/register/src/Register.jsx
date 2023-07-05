@@ -1,4 +1,4 @@
-import SIDRegister from './dist/index.js'
+import SIDRegister from '@web3-name-sdk/register'
 import { validateName } from '@siddomains/sidjs'
 import { utils } from 'ethers'
 import './App.css'
