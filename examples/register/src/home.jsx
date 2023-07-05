@@ -10,9 +10,6 @@ function Home() {
             <p className='text-xl font-bold mt-5'>One-stop Web3 Domain & Identity Platform</p>
             <ul className='mt-5 list-disc text-left'>
                 <li>
-                    <NavLink to='/resolve' className=''>Resolve Domain Example</NavLink>
-                </li>
-                <li>
                     <NavLink to='/register' className=''>Register Example</NavLink>
                 </li>
             </ul>

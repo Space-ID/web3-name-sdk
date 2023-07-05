@@ -4,11 +4,11 @@ import SID, { namehash, validateName, getSidAddress } from '@siddomains/sidjs'
 // @ts-ignore
 import { interfaces } from '@siddomains/sidjs/dist/constants/interfaces'
 import {
-  getRegistrarControllerContract,
   getResolverContract,
   getSIDContract,
   // @ts-ignore
 } from '@siddomains/sidjs/dist/utils/contract'
+import { getRegistrarControllerContract } from './utils/contract'
 
 import { RegisterOptions, SIDRegisterOptions, SupportedChainId } from './index.d'
 import { calculateDuration, getBufferedPrice, genCommitSecret } from './utils/register'
@@ -32,7 +32,7 @@ const getTldByChainId = (chainId: SupportedChainId) => {
   }
 }
 
-class SIDRegister {
+export default class SIDRegister {
   private readonly sidAddress: string
   private readonly signer: Signer
   private registrarController?: Contract
@@ -61,13 +61,13 @@ class SIDRegister {
       })
       const registrarControllerAddr = await resolverContract.interfaceImplementer(
         hash,
-        interfaces.permanentRegistrar
+        interfaces.permanentRegistrar,
       )
       if (this.chainId === 1) {
         this.registrarController = new Contract(
           registrarControllerAddr,
           ensRegisterAbi,
-          this.signer
+          this.signer,
         )
       } else {
         this.registrarController = getRegistrarControllerContract({
@@ -125,7 +125,7 @@ class SIDRegister {
         address,
         secret,
         publicResolver,
-        address
+        address,
       )
       const tx = await registrarController?.commit(commitment)
       await tx?.wait()
@@ -135,7 +135,7 @@ class SIDRegister {
         if (options?.onCommitSuccess) {
           await options.onCommitSuccess(ENS_COMMIT_WAIT_TIEM)
         } else {
-          await wait(ENS_COMMIT_WAIT_TIEM)
+          await wait(ENS_COMMIT_WAIT_TIEM * 1000)
         }
       } else {
         throw new Error('commitment error')
@@ -156,7 +156,7 @@ class SIDRegister {
         address,
         {
           value: bufferedPrice,
-        }
+        },
       )
       const gasLimit = (gas ?? BigNumber.from(0)).add(21000)
       tx = await registrarController?.registerWithConfig(
@@ -169,10 +169,10 @@ class SIDRegister {
         {
           value: bufferedPrice,
           gasLimit: gasLimit ? BigNumber.from(gasLimit) : undefined,
-        }
+        },
       )
     } else {
-      const referralSign = await getReferralSignature(referrer, this.chainId)
+      const referralSign = await getReferralSignature(referrer ?? '', this.chainId)
       const gas = await registrarController.estimateGas?.registerWithConfigAndPoint(
         normalizedName,
         address,
@@ -183,7 +183,7 @@ class SIDRegister {
         referralSign,
         {
           value: bufferedPrice,
-        }
+        },
       )
       const gasLimit = (gas ?? BigNumber.from(0)).add(21000)
       tx = await registrarController.registerWithConfigAndPoint(
@@ -197,12 +197,10 @@ class SIDRegister {
         {
           value: bufferedPrice,
           gasLimit,
-        }
+        },
       )
     }
     await tx.wait()
     return normalizedName
   }
 }
-
-export default SIDRegister

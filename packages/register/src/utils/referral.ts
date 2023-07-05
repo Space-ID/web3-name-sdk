@@ -1,4 +1,7 @@
+// @ts-ignore
 import { namehash } from '@siddomains/sidjs'
+import { ReferralSupportedChainId } from '../index.d'
+
 
 const emptySignature = [
   '0x0000000000000000000000000000000000000000',
@@ -8,17 +11,14 @@ const emptySignature = [
   '0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
 ]
 
-function getApiUrl(chainId) {
-  if (chainId === 56 || chainId === 42161) {
-    return 'https://api.space.id/v1/sign-referral'
-  }
+function getApiUrl() {
   return 'https://api.stg.space.id/v1/sign-referral'
 }
 
-export async function getReferralSignature(domain, chainId) {
+export async function getReferralSignature(domain: string, chainId: ReferralSupportedChainId) {
   if (!domain || !chainId) return emptySignature
   try {
-    const res = await fetch(getApiUrl(chainId), {
+    const res = await fetch(getApiUrl(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -28,13 +28,13 @@ export async function getReferralSignature(domain, chainId) {
         chainId,
       }),
     })
-    const resJson = await res.json()
-    const signReferral = resJson?.data
+    const signReferral = await res.json()
+
     if (signReferral) {
       return [
         signReferral.referrerAddress,
         namehash(domain),
-        signReferral.referrerCount,
+        Number(signReferral.referralCount),
         signReferral.signedAt,
         signReferral.signature,
       ]

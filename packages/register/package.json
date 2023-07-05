@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsup src/index.ts --dts --clean",
+    "build": "tsup src/index.ts --dts --format esm,cjs,iife --clean",
     "lint": "prettier --write .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -20,5 +20,6 @@
   },
   "dependencies": {
     "@siddomains/sid-contracts": "^0.1.30",
-    "ethers": "^5.7.2"}
+    "ethers": "^5.7.2"
+  }
 }
