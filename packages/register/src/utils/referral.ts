@@ -35,7 +35,7 @@ export async function getReferralSignature(domain: string, chainId: ReferralSupp
         signReferral.referrerAddress,
         namehash(domain),
         Number(signReferral.referralCount),
-        signReferral.signedAt,
+        Number(signReferral.signedAt),
         signReferral.signature,
       ]
     } else {

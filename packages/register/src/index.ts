@@ -95,7 +95,11 @@ export default class SIDRegister {
     const normalizedName = validateName(label)
     if (normalizedName !== label) throw new Error('unnormailzed name')
     const registrarController = await this.getRegistrarController()
-    return registrarController.rentPrice(normalizedName, calculateDuration(year))
+    const res = await registrarController.rentPrice(normalizedName, calculateDuration(year))
+    if (this.chainId === 1) {
+      return [res, BigNumber.from(0)]
+    }
+    return res
   }
 
   async getAvailable(label: string) {
