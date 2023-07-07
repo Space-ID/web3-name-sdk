@@ -11,14 +11,14 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@siddomains/sidjs": "0.1.25",
     "tsup": "^7.1.0"
   },
   "peerDependencies": {
-    "@siddomains/sidjs": "0.1.25",
+    "@siddomains/sidjs": "0.1.26",
     "ethers": "^5.7.2"
   },
   "dependencies": {
+    "@siddomains/sidjs": "0.1.26",
     "@siddomains/sid-contracts": "^0.1.30",
     "ethers": "^5.7.2"
   }

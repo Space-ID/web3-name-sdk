@@ -91,18 +91,18 @@ export default class SIDRegister {
     return sid.name(`sid-resolver.${getTldByChainId(this.chainId)}`).getAddress()
   }
 
-  async getRentPrice(label: string, year: number) {
+  async getRentPrice(label: string, year: number):Promise<BigNumber> {
     const normalizedName = validateName(label)
     if (normalizedName !== label) throw new Error('unnormailzed name')
     const registrarController = await this.getRegistrarController()
     const res = await registrarController.rentPrice(normalizedName, calculateDuration(year))
     if (this.chainId === 1) {
-      return [res, BigNumber.from(0)]
+      return res
     }
-    return res
+    return res[0].add(res[1])
   }
 
-  async getAvailable(label: string) {
+  async getAvailable(label: string):Promise<boolean>{
     const normalizedName = validateName(label)
     if (normalizedName !== label) throw new Error('unnormailzed name')
     const registrarController = await this.getRegistrarController()
@@ -147,7 +147,7 @@ export default class SIDRegister {
     }
 
     const priceRes = await this.getRentPrice(normalizedName, year)
-    const bufferedPrice = getBufferedPrice(priceRes[0].add(priceRes[1]))
+    const bufferedPrice = getBufferedPrice(priceRes)
 
     let tx: ContractTransaction
     if (this.chainId === 1) {

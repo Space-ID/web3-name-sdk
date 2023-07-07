@@ -48,8 +48,7 @@ function Register() {
   const getPrice = async () => {
     if (sidRegistrarRef.current) {
       const res = await sidRegistrarRef.current.getRentPrice(availableName, year)
-      console.log(utils.formatEther(res[0]), utils.formatEther(res[1]))
-      setPrice(utils.formatEther(res[0].add(res[1])))
+      setPrice(utils.formatEther(res))
     }
   }
   const register = async () => {
