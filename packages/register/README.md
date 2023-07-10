@@ -13,7 +13,7 @@ npm install @web3-name-sdk/register ethers@5.7.2
 
 Register a .bnb domain
 
-```javascript
+```typescript
 async function registerDomain(label: String) {
   // detect provider
   if (window.ethereum) {
@@ -38,9 +38,10 @@ async function registerDomain(label: String) {
 }
 
 ```
+
 Register a .arb domain
 
-```javascript
+```typescript
 async function registerDomain(label: String) {
   // detect provider
   if (window.ethereum) {
@@ -68,7 +69,7 @@ async function registerDomain(label: String) {
 
 Register a .eth domain
 
-```javascript
+```typescript
 async function registerEthDomain(label: String) {
   // detect provider
   if (window.ethereum) {
@@ -90,7 +91,7 @@ async function registerEthDomain(label: String) {
     // register for one year
     await register.register(label, address, 1, {
       // wait for commit to be valid
-      onCommitSuccess:(waitTime) => {
+      onCommitSuccess: (waitTime) => {
         return new Promise(resolve => {
           setTimeout(resolve, waitTime * 1000)
         })
@@ -99,3 +100,38 @@ async function registerEthDomain(label: String) {
   }
 }
 ```
+
+### SIDRegister Interface
+
+``` typescript
+/**
+  * Get the rent price for a name.
+  * @param label
+  * @param year number of registration years
+  */
+async getRentPrice(label: String, year:Number):Promise<BigNumber>
+```
+
+``` typescript
+/**
+ * check if the domain is available for registration
+ * @param label
+ */
+
+async getAvailable(label: string): Promise<boolean>
+
+```
+
+``` typescript
+ /**
+ * register a domain
+ * @param label
+ * @param address the address to register
+ * @param year
+ * @param options.referrer optional parameter. the referrer domain
+ * @param options.setPrimaryName optional parameter. register and set the domain as primary name. only work for .bnb and .arb domain
+ * @param options.onCommitSuccess optional parameter. callback function when the commitment is successful. only required for .eth domain
+ */
+async register(label: string, address: string, year: number, options?: RegisterOptions):Promise<string> 
+```
+

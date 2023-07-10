@@ -77,7 +77,6 @@ export default class SIDRegister {
       }
 
       return this.registrarController as Contract
-      // }
     }
     if (!this.registrarController) throw new Error('Registrar Controller is not initialized')
     return this.registrarController
@@ -91,7 +90,12 @@ export default class SIDRegister {
     return sid.name(`sid-resolver.${getTldByChainId(this.chainId)}`).getAddress()
   }
 
-  async getRentPrice(label: string, year: number):Promise<BigNumber> {
+  /**
+   * Get the rent price for a name.
+   * @param label
+   * @param year number of registration years
+   */
+  async getRentPrice(label: string, year: number): Promise<BigNumber> {
     const normalizedName = validateName(label)
     if (normalizedName !== label) throw new Error('unnormailzed name')
     const registrarController = await this.getRegistrarController()
@@ -102,14 +106,27 @@ export default class SIDRegister {
     return res[0].add(res[1])
   }
 
-  async getAvailable(label: string):Promise<boolean>{
+  /**
+   * check if the domain is available for registration
+   * @param label
+   */
+  async getAvailable(label: string): Promise<boolean> {
     const normalizedName = validateName(label)
     if (normalizedName !== label) throw new Error('unnormailzed name')
     const registrarController = await this.getRegistrarController()
     return registrarController.available(normalizedName)
   }
 
-  async register(label: string, address: string, year: number, options?: RegisterOptions) {
+  /**
+   * register a domain
+   * @param label
+   * @param address the address to register
+   * @param year
+   * @param options.referrer optional parameter. the referrer domain
+   * @param options.setPrimaryName optional parameter. register and set the domain as primary name. only work for .bnb and .arb domain
+   * @param options.onCommitSuccess optional parameter. callback function when the commitment is successful. only required for .eth domain
+   */
+  async register(label: string, address: string, year: number, options?: RegisterOptions): Promise<string> {
     const referrer = options?.referrer
     const setPrimaryName = options?.setPrimaryName
 
