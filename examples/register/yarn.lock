@@ -1244,6 +1244,20 @@
     solc "^0.4.20"
     testrpc "0.0.1"
 
+"@siddomains/sidjs@0.1.26":
+  version "0.1.26"
+  resolved "https://registry.yarnpkg.com/@siddomains/sidjs/-/sidjs-0.1.26.tgz#5e8b142a44b94659a2c955cb5ee7b5439d4d2c41"
+  integrity sha512-i+WFUzu/+OCtfTYZ4W2bLWwQ6R4IVMR5oZY5uZxaBrXeS774pbjOYqqI7k/S2/fQRpEiDxzI+NCleb5HBwYRgA==
+  dependencies:
+    "@babel/runtime" "^7.4.4"
+    "@ensdomains/ens-validation" "^0.1.0"
+    "@ensdomains/eth-ens-namehash" "^2.0.15"
+    "@siddomains/address-encoder" "^0.0.4"
+    "@siddomains/sid-contracts" "0.1.30"
+    content-hash "^2.5.2"
+    js-sha3 "^0.8.0"
+    lodash.toarray "^4.4.0"
+
 "@siddomains/sidjs@^0.1.13":
   version "0.1.22"
   resolved "https://registry.yarnpkg.com/@siddomains/sidjs/-/sidjs-0.1.22.tgz#c06a4e9ccacdc16bdc0d6c260fc008f73405c533"
@@ -2190,6 +2204,7 @@
   version "0.0.1"
   dependencies:
     "@siddomains/sid-contracts" "^0.1.30"
+    "@siddomains/sidjs" "0.1.26"
     ethers "^5.7.2"
 
 "@web3modal/core@2.4.3":

@@ -12,7 +12,7 @@ const emptySignature = [
 ]
 
 function getApiUrl() {
-  return 'https://api.stg.space.id/v1/sign-referral'
+  return 'https://api.prd.space.id/v1/sign-referral'
 }
 
 export async function getReferralSignature(domain: string, chainId: ReferralSupportedChainId) {

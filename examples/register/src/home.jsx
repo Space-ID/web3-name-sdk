@@ -8,7 +8,7 @@ function Home() {
     if (window.ethereum) {
       const provider = new providers.Web3Provider(window.ethereum)
       // switch to bsc
-      await provider.send('wallet_switchEthereumChain', [{ chainId: '0x38' }])
+      await provider.send('wallet_switchEthereumChain', [{ chainId: '0x1' }])
       // connect wallet
       await provider.send('eth_requestAccounts', [])
       // get signer
@@ -16,13 +16,13 @@ function Home() {
       // get address
       const address = await signer.getAddress()
 
-      const register = new SIDRegister({ signer, chainId: 56 })
+      const register = new SIDRegister({ signer, chainId: 1 })
       // check if available
       const available = await register.getAvailable('test')
       // get price
       const price = await register.getRentPrice('test', 1)
       // register for one year
-      await register.register('test', address, 1)
+      await register.register('test', address, 1,{onCommitSuccess})
     }
   }
   return (
