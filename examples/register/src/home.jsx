@@ -1,7 +1,7 @@
 import logo from './assets/logo.svg'
 import { NavLink } from 'react-router-dom'
-import { providers } from 'ethers'
 import SIDRegister from '@web3-name-sdk/register'
+import { providers } from 'ethers'
 
 function Home() {
   const handleClick = async () => {

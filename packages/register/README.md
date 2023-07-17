@@ -14,6 +14,9 @@ npm install @web3-name-sdk/register ethers@5.7.2
 Register a .bnb domain
 
 ```typescript
+import SIDRegister from '@web3-name-sdk/register'
+import { providers } from 'ethers'
+
 async function registerDomain(label: String) {
   // detect provider
   if (window.ethereum) {
@@ -42,6 +45,9 @@ async function registerDomain(label: String) {
 Register a .arb domain
 
 ```typescript
+import SIDRegister from '@web3-name-sdk/register'
+import { providers } from 'ethers'
+
 async function registerDomain(label: String) {
   // detect provider
   if (window.ethereum) {
@@ -70,6 +76,9 @@ async function registerDomain(label: String) {
 Register a .eth domain
 
 ```typescript
+import SIDRegister from '@web3-name-sdk/register'
+import { providers } from 'ethers'
+
 async function registerEthDomain(label: String) {
   // detect provider
   if (window.ethereum) {
