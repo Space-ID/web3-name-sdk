@@ -2,7 +2,6 @@
 import { namehash } from '@siddomains/sidjs'
 import { ReferralSupportedChainId } from '../index.d'
 
-
 const emptySignature = [
   '0x0000000000000000000000000000000000000000',
   '0x0000000000000000000000000000000000000000000000000000000000000000',

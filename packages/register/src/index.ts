@@ -61,13 +61,13 @@ export default class SIDRegister {
       })
       const registrarControllerAddr = await resolverContract.interfaceImplementer(
         hash,
-        interfaces.permanentRegistrar,
+        interfaces.permanentRegistrar
       )
       if (this.chainId === 1) {
         this.registrarController = new Contract(
           registrarControllerAddr,
           ensRegisterAbi,
-          this.signer,
+          this.signer
         )
       } else {
         this.registrarController = getRegistrarControllerContract({
@@ -126,7 +126,12 @@ export default class SIDRegister {
    * @param options.setPrimaryName optional parameter. register and set the domain as primary name. only work for .bnb and .arb domain
    * @param options.onCommitSuccess optional parameter. callback function when the commitment is successful. only required for .eth domain
    */
-  async register(label: string, address: string, year: number, options?: RegisterOptions): Promise<string> {
+  async register(
+    label: string,
+    address: string,
+    year: number,
+    options?: RegisterOptions
+  ): Promise<string> {
     const referrer = options?.referrer
     const setPrimaryName = options?.setPrimaryName
 
@@ -146,7 +151,7 @@ export default class SIDRegister {
         address,
         secret,
         publicResolver,
-        address,
+        address
       )
       const tx = await registrarController?.commit(commitment)
       await tx?.wait()
@@ -177,7 +182,7 @@ export default class SIDRegister {
         address,
         {
           value: bufferedPrice,
-        },
+        }
       )
       const gasLimit = (gas ?? BigNumber.from(0)).add(21000)
       tx = await registrarController?.registerWithConfig(
@@ -190,7 +195,7 @@ export default class SIDRegister {
         {
           value: bufferedPrice,
           gasLimit: gasLimit ? BigNumber.from(gasLimit) : undefined,
-        },
+        }
       )
     } else {
       const referralSign = await getReferralSignature(referrer ?? '', this.chainId)
@@ -204,7 +209,7 @@ export default class SIDRegister {
         referralSign,
         {
           value: bufferedPrice,
-        },
+        }
       )
       const gasLimit = (gas ?? BigNumber.from(0)).add(21000)
       tx = await registrarController.registerWithConfigAndPoint(
@@ -218,7 +223,7 @@ export default class SIDRegister {
         {
           value: bufferedPrice,
           gasLimit,
-        },
+        }
       )
     }
     await tx.wait()

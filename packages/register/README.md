@@ -3,6 +3,7 @@
 ## Installation
 
 ---
+
 Install @web3-name-sdk/register, alongside peer dependency [Ethers v5](https://www.npmjs.com/package/ethers/v/5.7.2).
 
 ```
@@ -38,11 +39,10 @@ async function registerDomain(label: String) {
     // register for one year
     await register.register(label, address, 1, {
       setPrimaryName: true, // set as primary name, default is false,
-      referrer: 'test.bnb' // referrer domain, default is null
+      referrer: 'test.bnb', // referrer domain, default is null
     })
   }
 }
-
 ```
 
 Register a .arb domain
@@ -72,11 +72,10 @@ async function registerDomain(label: String) {
     // register for one year
     await register.register(label, address, 1, {
       setPrimaryName: true, // set as primary name, default is false,
-      referrer: 'test.bnb' // referrer domain, default is null
+      referrer: 'test.bnb', // referrer domain, default is null
     })
   }
 }
-
 ```
 
 Register a .eth domain
@@ -107,10 +106,10 @@ async function registerEthDomain(label: String) {
     await register.register(label, address, 1, {
       // wait for commit to be valid
       onCommitSuccess: (waitTime) => {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
           setTimeout(resolve, waitTime * 1000)
         })
-      }
+      },
     })
   }
 }
@@ -147,6 +146,5 @@ async getAvailable(label: string): Promise<boolean>
  * @param options.setPrimaryName optional parameter. register and set the domain as primary name. only work for .bnb and .arb domain
  * @param options.onCommitSuccess optional parameter. callback function when the commitment is successful. only required for .eth domain
  */
-async register(label: string, address: string, year: number, options?: RegisterOptions):Promise<string> 
+async register(label: string, address: string, year: number, options?: RegisterOptions):Promise<string>
 ```
-
