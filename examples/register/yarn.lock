@@ -1221,10 +1221,10 @@
   resolved "https://registry.yarnpkg.com/@siddomains/resolver/-/resolver-0.1.1.tgz#5ee3921fe9d5a10814ff6635710dbd7af3b024b0"
   integrity sha512-cZYaHJN9iXNXeLvaMPDm3p6ymNklDzQ11reIfLMvLi0zP0UGERM+YXCqwzAZkoKulysVWX0iUbihl64/NrJJew==
 
-"@siddomains/sid-contracts@0.1.30", "@siddomains/sid-contracts@^0.1.30":
-  version "0.1.30"
-  resolved "https://registry.yarnpkg.com/@siddomains/sid-contracts/-/sid-contracts-0.1.30.tgz#4115a74a9bc55128b6911ca031670bad7b163199"
-  integrity sha512-j7+a0sFLperhwB2s/B7ntEMrB9epmOyEX4q4Jml+p94/qveLkyfryKCpQG6d70ZnDVzdLOWGBzYK5gYPS/IMhw==
+"@siddomains/sid-contracts@^0.1.31":
+  version "0.1.31"
+  resolved "https://registry.yarnpkg.com/@siddomains/sid-contracts/-/sid-contracts-0.1.31.tgz#be214bbe57f7b81084e6b4a825aa312c7c7131b0"
+  integrity sha512-4gYepgdjQCwBokXAHgZV6kyO6VVP1Mqz7Kkd+3tHHSzo3PJ1xjl4xFVYOh35b08R7u9bokj9qC17uL8dxnsiTw==
   dependencies:
     "@ensdomains/buffer" "^0.0.13"
     "@ensdomains/solsha1" "0.0.3"
@@ -1244,20 +1244,6 @@
     solc "^0.4.20"
     testrpc "0.0.1"
 
-"@siddomains/sidjs@0.1.26":
-  version "0.1.26"
-  resolved "https://registry.yarnpkg.com/@siddomains/sidjs/-/sidjs-0.1.26.tgz#5e8b142a44b94659a2c955cb5ee7b5439d4d2c41"
-  integrity sha512-i+WFUzu/+OCtfTYZ4W2bLWwQ6R4IVMR5oZY5uZxaBrXeS774pbjOYqqI7k/S2/fQRpEiDxzI+NCleb5HBwYRgA==
-  dependencies:
-    "@babel/runtime" "^7.4.4"
-    "@ensdomains/ens-validation" "^0.1.0"
-    "@ensdomains/eth-ens-namehash" "^2.0.15"
-    "@siddomains/address-encoder" "^0.0.4"
-    "@siddomains/sid-contracts" "0.1.30"
-    content-hash "^2.5.2"
-    js-sha3 "^0.8.0"
-    lodash.toarray "^4.4.0"
-
 "@siddomains/sidjs@^0.1.13":
   version "0.1.22"
   resolved "https://registry.yarnpkg.com/@siddomains/sidjs/-/sidjs-0.1.22.tgz#c06a4e9ccacdc16bdc0d6c260fc008f73405c533"
@@ -1273,16 +1259,16 @@
     js-sha3 "^0.8.0"
     lodash "^4.17.21"
 
-"@siddomains/sidjs@^0.1.25":
-  version "0.1.25"
-  resolved "https://registry.yarnpkg.com/@siddomains/sidjs/-/sidjs-0.1.25.tgz#10c8f00780d6d4be245dfce956b3e111955db221"
-  integrity sha512-esTuE95wlNwIvoxLzB9BXQjPXfIGGpXwgEAlUdnNaYOw5FuUNqiSOUELIXu/taMqcHDKRdtdZcoidWR4CLYobw==
+"@siddomains/sidjs@^0.1.28":
+  version "0.1.28"
+  resolved "https://registry.yarnpkg.com/@siddomains/sidjs/-/sidjs-0.1.28.tgz#91ee3295f8a6b49d84a859f367411a2762c5b7bb"
+  integrity sha512-oloQ9ynG4UWrWg2YOLk+7TCIOWqH7N5FrRHZSpHWlg1u5mi+g3zSEQ6E19mBxGcpDcbh+IMmqdD5QjufkEJBQA==
   dependencies:
     "@babel/runtime" "^7.4.4"
     "@ensdomains/ens-validation" "^0.1.0"
     "@ensdomains/eth-ens-namehash" "^2.0.15"
     "@siddomains/address-encoder" "^0.0.4"
-    "@siddomains/sid-contracts" "0.1.30"
+    "@siddomains/sid-contracts" "^0.1.31"
     content-hash "^2.5.2"
     js-sha3 "^0.8.0"
     lodash.toarray "^4.4.0"
@@ -2200,11 +2186,13 @@
     "@walletconnect/window-getters" "^1.0.1"
     tslib "1.14.1"
 
-"@web3-name-sdk/register@../../packages/register/":
-  version "0.0.1"
+"@web3-name-sdk/register@^0.0.1-beta":
+  version "0.0.1-beta"
+  resolved "https://registry.yarnpkg.com/@web3-name-sdk/register/-/register-0.0.1-beta.tgz#8b15701536258fa41d8a90633f9aa506a112a512"
+  integrity sha512-uyIkavO8ZNIcGWDh1mOkasu99PcyB08Rlnsb3IaJQIcEydriuQjY9n7xbdDGKX/5EuMKaM1V/5ufQC5a4/yCqw==
   dependencies:
-    "@siddomains/sid-contracts" "^0.1.30"
-    "@siddomains/sidjs" "0.1.26"
+    "@siddomains/sid-contracts" "^0.1.31"
+    "@siddomains/sidjs" "^0.1.28"
     ethers "^5.7.2"
 
 "@web3modal/core@2.4.3":
