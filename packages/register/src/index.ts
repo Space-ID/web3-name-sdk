@@ -122,7 +122,7 @@ export default class SIDRegister {
    * @param label
    * @param address the address to register
    * @param year
-   * @param options.referrer optional parameter. the referrer domain
+   * @param options.referrer optional parameter. the referrer domain. only work for .bnb and .arb domain
    * @param options.setPrimaryName optional parameter. register and set the domain as primary name. only work for .bnb and .arb domain
    * @param options.onCommitSuccess optional parameter. callback function when the commitment is successful. only required for .eth domain
    */
