@@ -22,7 +22,10 @@ function Home() {
       // get price
       const price = await register.getRentPrice('test', 1)
       // register for one year
-      await register.register('test', address, 1,{onCommitSuccess})
+      await register.register('test', address, 1, {
+        setPrimaryName: false, // 可选参数
+        onCommitSuccess
+      })
     }
   }
   return (

@@ -34,7 +34,10 @@ async function registerDomain(label: String) {
     // check if available
     const available = await register.getAvailable(label)
     // get price
-    const price = await register.getRentPrice(label, 1)
+    const price = await register.getRentPrice(label, 1, {
+      setPrimaryName: true, // set as primary name, default is false,
+      referrer: 'test.bnb' // referrer domain, default is null
+    })
     // register for one year
     await register.register(label, address, 1)
   }
@@ -65,7 +68,10 @@ async function registerDomain(label: String) {
     // check if available
     const available = await register.getAvailable(label)
     // get price
-    const price = await register.getRentPrice(label, 1)
+    const price = await register.getRentPrice(label, 1, {
+      setPrimaryName: true, // set as primary name, default is false,
+      referrer: 'test.bnb' // referrer domain, default is null
+    })
     // register for one year
     await register.register(label, address, 1)
   }
