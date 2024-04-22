@@ -7,13 +7,14 @@ type SIDRegisterOptions = {
   sidAddress?: string
   chainId: SupportedChainId
 }
-type SIDRegisterOptionsV2 = {
+type SIDRegisterOptionsV3 = {
   publicClient: PublicClient
   walletClient: WalletClient
-  chainId: number,
-  tldId: number,
   identifier: Hex,
   controllerAddr: Address,
+  resolverAddr: Address,
+  simulateAccount?: Address,
+  simulateValue?: string,
 }
 
 type RegisterOptions = {
@@ -21,5 +22,10 @@ type RegisterOptions = {
   setPrimaryName?: boolean
   onCommitSuccess?: (waitTime: number) => Promise<void>
 }
+type RegisterOptionsV3 = {
+  referrer?: Address
+  usePoint?: boolean
+  setPrimaryName?: boolean
+}
 
-export { SIDRegisterOptions, RegisterOptions, SupportedChainId, ReferralSupportedChainId, SIDRegisterOptionsV2 }
+export { SIDRegisterOptions, RegisterOptions, SupportedChainId, ReferralSupportedChainId, SIDRegisterOptionsV3, RegisterOptionsV3 }

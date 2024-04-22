@@ -1,30 +1,85 @@
-import { Address, Hex, PublicClient, WalletClient } from 'viem'
-import { validateName, countCharacters } from '@web3-name-sdk/core/dist/utils'
+import { BigNumber, Signer, Contract, ContractTransaction } from 'ethers'
+// @ts-ignore
+import SID, { namehash, validateName, getSidAddress } from '@siddomains/sidjs'
+// @ts-ignore
+import { interfaces } from '@siddomains/sidjs/dist/constants/interfaces'
+import {
+  getResolverContract,
+  getSIDContract,
+  // @ts-ignore
+} from '@siddomains/sidjs/dist/utils/contract'
+import { getRegistrarControllerContract } from './utils/contract'
 
-import { RegisterOptions, SIDRegisterOptionsV2, SupportedChainId } from './index.d'
+import { RegisterOptions, SIDRegisterOptions, SupportedChainId } from './index.d'
 import { calculateDuration, getBufferedPrice, genCommitSecret } from './utils/register'
 import { getReferralSignature } from './utils/referral'
 import { ENS_COMMIT_WAIT_TIEM } from './constants'
 import ensRegisterAbi from './abi/ens'
 import { wait } from './utils'
-import { Signer } from 'ethers'
 
-export default class SIDRegisterV2 {
-  private readonly publicClient: PublicClient
-  private readonly walletClient: WalletClient
-  private readonly tldId: number
-  private readonly chainId: number
-  private readonly identifier: Hex
-  private readonly controllerAddr: Address
+const getTldByChainId = (chainId: SupportedChainId) => {
+  switch (chainId) {
+    case 1:
+      return 'eth'
+    case 97:
+    case 56:
+      return 'bnb'
+    case 42161:
+    case 421613:
+      return 'arb'
+    default:
+      return 'bnb'
+  }
+}
 
-  constructor(options: SIDRegisterOptionsV2) {
-    const { publicClient, walletClient, chainId, tldId, identifier, controllerAddr } = options
-    this.publicClient = publicClient
-    this.walletClient = walletClient
-    this.tldId = tldId
-    this.identifier = identifier
-    this.controllerAddr = controllerAddr
+export default class SIDRegister {
+  private readonly sidAddress: string
+  private readonly signer: Signer
+  private registrarController?: Contract
+  private readonly chainId: SupportedChainId
+
+  constructor(options: SIDRegisterOptions) {
+    const { signer, sidAddress, chainId } = options
+    if (!Signer.isSigner(signer)) throw new Error('signer is required')
+    if (!chainId) throw new Error('chainId is required')
+    this.sidAddress = sidAddress ?? getSidAddress(chainId)
+    this.signer = signer
     this.chainId = chainId
+  }
+
+  async getRegistrarController() {
+    if (!this.registrarController) {
+      const sidContract = getSIDContract({
+        address: this.sidAddress,
+        provider: this.signer.provider,
+      })
+      const hash = namehash(getTldByChainId(this.chainId))
+      const resolverAddr = await sidContract.resolver(hash)
+      const resolverContract = getResolverContract({
+        address: resolverAddr,
+        provider: this.signer.provider,
+      })
+      const registrarControllerAddr = await resolverContract.interfaceImplementer(
+        hash,
+        interfaces.permanentRegistrar
+      )
+      if (this.chainId === 1) {
+        this.registrarController = new Contract(
+          registrarControllerAddr,
+          ensRegisterAbi,
+          this.signer
+        )
+      } else {
+        this.registrarController = getRegistrarControllerContract({
+          address: registrarControllerAddr,
+          signer: this.signer,
+        })
+      }
+
+      return this.registrarController as Contract
+    }
+    if (!this.registrarController) throw new Error('Registrar Controller is not initialized')
+    return this.registrarController
   }
 
   private async getPublicResolver() {
@@ -75,7 +130,7 @@ export default class SIDRegisterV2 {
     label: string,
     address: string,
     year: number,
-    options?: RegisterOptions,
+    options?: RegisterOptions
   ): Promise<string> {
     const referrer = options?.referrer
     const setPrimaryName = options?.setPrimaryName
@@ -96,7 +151,7 @@ export default class SIDRegisterV2 {
         address,
         secret,
         publicResolver,
-        address,
+        address
       )
       const tx = await registrarController?.commit(commitment)
       await tx?.wait()
@@ -127,7 +182,7 @@ export default class SIDRegisterV2 {
         address,
         {
           value: bufferedPrice,
-        },
+        }
       )
       const gasLimit = (gas ?? BigNumber.from(0)).add(21000)
       tx = await registrarController?.registerWithConfig(
@@ -140,7 +195,7 @@ export default class SIDRegisterV2 {
         {
           value: bufferedPrice,
           gasLimit: gasLimit ? BigNumber.from(gasLimit) : undefined,
-        },
+        }
       )
     } else {
       const referralSign = await getReferralSignature(referrer ?? '', this.chainId)
@@ -154,7 +209,7 @@ export default class SIDRegisterV2 {
         referralSign,
         {
           value: bufferedPrice,
-        },
+        }
       )
       const gasLimit = (gas ?? BigNumber.from(0)).add(21000)
       tx = await registrarController.registerWithConfigAndPoint(
@@ -168,7 +223,7 @@ export default class SIDRegisterV2 {
         {
           value: bufferedPrice,
           gasLimit,
-        },
+        }
       )
     }
     await tx.wait()
