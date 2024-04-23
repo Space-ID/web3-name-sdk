@@ -4,10 +4,10 @@
 
 ---
 
-Install @web3-name-sdk/register, alongside peer dependency [Ethers v5](https://www.npmjs.com/package/ethers/v/5.7.2).
+Install @web3-name-sdk/register, alongside peer dependency.
 
 ```
-npm install @web3-name-sdk/register ethers@5.7.2
+npm install @web3-name-sdk/register ethers@5.7.2 viem@1.20
 ```
 
 ## Example
@@ -115,19 +115,19 @@ async function registerEthDomain(label: String) {
 }
 ```
 
-Register a SPACE ID 3.0 .cake domain
+Register a SPACE ID 3.0 .gno domain
 
 ```typescript
 import { SIDRegisterV3, validateNameV3 } from '@web3-name-sdk/register'
 import { createPublicClient, createWalletClient, custom, http } from 'viem'
-import { bscTestnet } from 'viem/chains'
+import { gnosisChiado } from 'viem/chains'
 
 const publicClient = createPublicClient({
-  chain: bscTestnet,
+  chain: gnosisChiado,
   transport: http(),
 })
 const walletClient = createWalletClient({
-  chain: bscTestnet,
+  chain: gnosisChiado,
   transport: custom(window.ethereum),
 })
 const address = await walletClient.getAddresses()
@@ -136,11 +136,9 @@ const address = await walletClient.getAddresses()
 const register = new SIDRegisterV3({
   publicClient,
   walletClient,
-  identifier: '2636823826277309872098160245320544308382397132302228906642157795810372',
-  controllerAddr: '0xc5005a0027ccd013622940202693795973991dd4',
-  resolverAddr: '0x87fc5fdE1Db0b8e555aa3e1A7C41C983737DE1B7',
-  simulateAccount:address[0],
-  simulateValue:'0.1'
+  identifier: '274997945614032132263423446017095573970170942858695765128406315342190546',
+  controllerAddr: '0xd7b837a0e388b4c25200983bdaa3ef3a83ca86b7',
+  resolverAddr: '0x6D3B3F99177FB2A5de7F9E928a9BD807bF7b5BAD',
 })
 // normalize lael
 const normalizedLabel = validateNameV3('test123')

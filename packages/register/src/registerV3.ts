@@ -51,7 +51,7 @@ export default class SIDRegisterV3 {
         args: ([
           this.identifier,
           [label],
-          this.simulateAccount,
+          this.resolverAddr,
           calculateDuration(year),
           this.resolverAddr,
           false,

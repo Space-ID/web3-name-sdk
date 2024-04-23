@@ -2,17 +2,17 @@ import logo from './assets/logo.svg'
 import { NavLink } from 'react-router-dom'
 import { SIDRegisterV3, validateNameV3 } from '@web3-name-sdk/register'
 import { createPublicClient, createWalletClient, custom, http } from 'viem'
-import { bscTestnet } from 'viem/chains'
+import { gnosisChiado } from 'viem/chains'
 
 function Home() {
   const handleClick = async () => {
     if (window.ethereum) {
       const publicClient = createPublicClient({
-        chain: bscTestnet,
+        chain: gnosisChiado,
         transport: http(),
       })
       const walletClient = createWalletClient({
-        chain: bscTestnet,
+        chain: gnosisChiado,
         transport: custom(window.ethereum),
       })
       const address = await walletClient.getAddresses()
@@ -20,11 +20,11 @@ function Home() {
       const register = new SIDRegisterV3({
         publicClient,
         walletClient,
-        identifier: '2636823826277309872098160245320544308382397132302228906642157795810372',
-        controllerAddr: '0xc5005a0027ccd013622940202693795973991dd4',
-        resolverAddr: '0x87fc5fdE1Db0b8e555aa3e1A7C41C983737DE1B7',
-        simulateAccount:address[0],
-        simulateValue:'0.1'
+        identifier: '274997945614032132263423446017095573970170942858695765128406315342190546',
+        controllerAddr: '0xd7b837a0e388b4c25200983bdaa3ef3a83ca86b7',
+        resolverAddr: '0x6D3B3F99177FB2A5de7F9E928a9BD807bF7b5BAD',
+        // simulateAccount:address[0],
+        // simulateValue:'0.1'
       })
       const normalizedLabel = validateNameV3('test124')
       // check if available
@@ -34,8 +34,8 @@ function Home() {
       const price = await register.getRentPrice(normalizedLabel, 1)
       console.log(price)
       // register for one year
-      await register.register('test', address[0], 1, {
-        setPrimaryName: false, // 可选参数
+      await register.register(normalizedLabel, address[0], 1, {
+          setPrimaryName: false, // 可选参数
       })
     }
   }
