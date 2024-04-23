@@ -1,7 +1,7 @@
 import { Address, encodeFunctionData, parseEther, PublicClient, WalletClient, zeroAddress } from 'viem'
 
 import { RegisterOptionsV3, SIDRegisterOptionsV3 } from './index.d'
-import { calculateDuration, getBufferedPrice, encodeExtraData,validateNameV3 } from './utils/registerV3'
+import { calculateDuration, getBufferedPrice, encodeExtraData, validateNameV3 } from './utils/registerV3'
 import { sidV3CtrlAbi } from './abi/sidCtrlV3'
 import { waitForTransactionReceipt } from 'viem/actions'
 
@@ -25,6 +25,11 @@ export default class SIDRegisterV3 {
     this.simulateValue = parseEther(options.simulateValue ?? '500')
   }
 
+  private validateName(name: string) {
+    const res = validateNameV3(name)
+    if (res !== name) throw new Error('unnormailzed name')
+  }
+
   /**
    * Get the rent price for a name in wei.
    * @param label
@@ -35,7 +40,7 @@ export default class SIDRegisterV3 {
    */
   async getRentPrice(label: string, year: number, options?: RegisterOptionsV3) {
 
-    validateNameV3(label)
+    this.validateName(label)
 
     const extraData = encodeExtraData(options?.usePoint ?? false, options?.referrer)
     try {
@@ -71,12 +76,12 @@ export default class SIDRegisterV3 {
    * @param label
    */
   async getAvailable(label: string): Promise<boolean> {
-    const normalizedName = validateNameV3(label)
+    this.validateName(label)
     return await this.publicClient.readContract({
       address: this.controllerAddr,
       abi: sidV3CtrlAbi,
       functionName: 'available',
-      args: [this.identifier, normalizedName],
+      args: [this.identifier, label],
     })
   }
 
@@ -90,9 +95,9 @@ export default class SIDRegisterV3 {
    * @param options.setPrimaryName optional parameter. register and set the domain as primary name.
    */
   async register(label: string, address: Address, year: number, options?: RegisterOptionsV3): Promise<string> {
-
+    this.validateName(label)
     const setPrimaryName = options?.setPrimaryName ?? false
-    const normalizedName = validateNameV3(label)
+    const normalizedName = label
     const duration = calculateDuration(year)
     const extraData = [encodeExtraData(options?.usePoint ?? false, options?.referrer)]
 

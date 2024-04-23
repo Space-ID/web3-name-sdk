@@ -14,7 +14,6 @@ export function getBufferedPrice(price: bigint) {
 
 export function validateNameV3(label: string) {
   const res = validateName(label)
-  if (res !== label) throw new Error('unnormailzed name')
   const len = countCharacters(res)
   if (len < 3 || len > 512) {
     throw new Error('Invalid name')
