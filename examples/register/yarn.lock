@@ -2239,8 +2239,10 @@
     "@ensdomains/ens-validation" "^0.1.0"
     viem "^1.20"
 
-"@web3-name-sdk/register@file:../../packages/register":
-  version "0.0.7-beta.1"
+"@web3-name-sdk/register@0.0.2-beta.1":
+  version "0.0.2-beta.1"
+  resolved "https://registry.yarnpkg.com/@web3-name-sdk/register/-/register-0.0.2-beta.1.tgz#3337ce62970c3a4461d1b862f6d53395fc0c77f0"
+  integrity sha512-mgwkabIWQR/6EaZI29xtWD3nP1gMHBKTBPFgOQYz+Rg9UhR6pDRkWimcNdrMopmIA3kJ86KA3XudTJPMuSGRBw==
   dependencies:
     "@siddomains/sid-contracts" "^0.1.31"
     "@siddomains/sidjs" "^0.1.28"
