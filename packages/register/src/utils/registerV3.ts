@@ -1,4 +1,4 @@
-import { countCharacters, validateName } from '@web3-name-sdk/core/dist/utils/index.js'
+import { countCharacters, validateName } from '@web3-name-sdk/core/utils'
 import { Address, encodeAbiParameters, Hex } from 'viem'
 
 export const YEAR_IN_SECONDS = 31556952

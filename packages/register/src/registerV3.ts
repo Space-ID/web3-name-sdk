@@ -1,9 +1,8 @@
 import { Address, encodeFunctionData, parseEther, PublicClient, WalletClient, zeroAddress } from 'viem'
 
-import { RegisterOptionsV3, SIDRegisterOptionsV3 } from './index.d'
+import { RegisterOptionsV3, SIDRegisterOptionsV3 } from './types'
 import { calculateDuration, getBufferedPrice, encodeExtraData, validateNameV3 } from './utils/registerV3'
 import { sidV3CtrlAbi } from './abi/sidCtrlV3'
-import { waitForTransactionReceipt } from 'viem/actions'
 
 export default class SIDRegisterV3 {
   private readonly publicClient: PublicClient
@@ -138,7 +137,7 @@ export default class SIDRegisterV3 {
       gas: gasLimit,
       chain: null,
     })
-    await waitForTransactionReceipt(this.publicClient, { hash: txHash })
+    await this.publicClient.waitForTransactionReceipt({ hash: txHash })
     return normalizedName
   }
 }

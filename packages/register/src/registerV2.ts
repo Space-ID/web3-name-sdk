@@ -10,7 +10,7 @@ import {
 } from '@siddomains/sidjs/dist/utils/contract'
 import { getRegistrarControllerContract } from './utils/contract'
 
-import { RegisterOptions, SIDRegisterOptions, SupportedChainId } from './index.d'
+import { RegisterOptions, SIDRegisterOptions, SupportedChainId } from './types'
 import { calculateDuration, getBufferedPrice, genCommitSecret } from './utils/register'
 import { getReferralSignature } from './utils/referral'
 import { ENS_COMMIT_WAIT_TIEM } from './constants'

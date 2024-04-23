@@ -115,6 +115,46 @@ async function registerEthDomain(label: String) {
 }
 ```
 
+Register a SPACE ID 3.0 .cake domain
+
+```typescript
+import { SIDRegisterV3, validateNameV3 } from '@web3-name-sdk/register'
+import { createPublicClient, createWalletClient, custom, http } from 'viem'
+import { bscTestnet } from 'viem/chains'
+
+const publicClient = createPublicClient({
+  chain: bscTestnet,
+  transport: http(),
+})
+const walletClient = createWalletClient({
+  chain: bscTestnet,
+  transport: custom(window.ethereum),
+})
+const address = await walletClient.getAddresses()
+
+// init register instance
+const register = new SIDRegisterV3({
+  publicClient,
+  walletClient,
+  identifier: '2636823826277309872098160245320544308382397132302228906642157795810372',
+  controllerAddr: '0xc5005a0027ccd013622940202693795973991dd4',
+  resolverAddr: '0x87fc5fdE1Db0b8e555aa3e1A7C41C983737DE1B7',
+  simulateAccount:address[0],
+  simulateValue:'0.1'
+})
+// normalize lael
+const normalizedLabel = validateNameV3('test123')
+// check if available
+const available = await register.getAvailable(normalizedLabel)
+// get price
+const price = await register.getRentPrice(normalizedLabel, 1)
+// register for one year and set as primary name
+await register.register(normalizedLabel, address[0], 1, {
+  setPrimaryName: true
+})
+
+```
+
 ### SIDRegister Interface
 
 ``` typescript

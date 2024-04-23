@@ -1,30 +1,41 @@
 import logo from './assets/logo.svg'
 import { NavLink } from 'react-router-dom'
-import SIDRegister from '@web3-name-sdk/register'
-import { providers } from 'ethers'
+import { SIDRegisterV3, validateNameV3 } from '@web3-name-sdk/register'
+import { createPublicClient, createWalletClient, custom, http } from 'viem'
+import { bscTestnet } from 'viem/chains'
 
 function Home() {
   const handleClick = async () => {
     if (window.ethereum) {
-      const provider = new providers.Web3Provider(window.ethereum)
-      // switch to bsc
-      await provider.send('wallet_switchEthereumChain', [{ chainId: '0x1' }])
-      // connect wallet
-      await provider.send('eth_requestAccounts', [])
-      // get signer
-      const signer = provider.getSigner()
+      const publicClient = createPublicClient({
+        chain: bscTestnet,
+        transport: http(),
+      })
+      const walletClient = createWalletClient({
+        chain: bscTestnet,
+        transport: custom(window.ethereum),
+      })
+      const address = await walletClient.getAddresses()
       // get address
-      const address = await signer.getAddress()
-
-      const register = new SIDRegister({ signer, chainId: 1 })
+      const register = new SIDRegisterV3({
+        publicClient,
+        walletClient,
+        identifier: '2636823826277309872098160245320544308382397132302228906642157795810372',
+        controllerAddr: '0xc5005a0027ccd013622940202693795973991dd4',
+        resolverAddr: '0x87fc5fdE1Db0b8e555aa3e1A7C41C983737DE1B7',
+        simulateAccount:address[0],
+        simulateValue:'0.1'
+      })
+      const normalizedLabel = validateNameV3('test124')
       // check if available
-      const available = await register.getAvailable('test')
+      const available = await register.getAvailable(normalizedLabel)
+      console.log(available)
       // get price
-      const price = await register.getRentPrice('test', 1)
+      const price = await register.getRentPrice(normalizedLabel, 1)
+      console.log(price)
       // register for one year
-      await register.register('test', address, 1, {
+      await register.register('test', address[0], 1, {
         setPrimaryName: false, // 可选参数
-        onCommitSuccess
       })
     }
   }
@@ -37,6 +48,9 @@ function Home() {
       <ul className='mt-5 list-disc text-left'>
         <li>
           <NavLink to='/register' className=''>Register Example</NavLink>
+        </li>
+        <li>
+          <NavLink to='/registerv3' className=''>RegisterV3 Example</NavLink>
         </li>
       </ul>
       <button className='btn btn-primary' onClick={handleClick}>Test</button>
