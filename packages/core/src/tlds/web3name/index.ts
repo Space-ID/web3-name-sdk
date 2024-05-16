@@ -16,6 +16,7 @@ type GetDomainNameProps = {
   rpcUrl?: string
 }
 type BatchGetDomainNameProps = { addressList: string[] } & Omit<GetDomainNameProps, 'address'>
+type BatchGetDomainNameReturn = { address: string, name: string | null }[]
 
 export class Web3Name {
   private contractReader: ContractReader
@@ -148,9 +149,50 @@ export class Web3Name {
     }
   }
 
-  async batchGetDomainName({ addressList, queryChainIdList, queryTldList, rpcUrl }: BatchGetDomainNameProps) {
+  async batchGetDomainName({
+                             addressList,
+                             queryChainIdList,
+                             queryTldList,
+                             rpcUrl,
+                           }: BatchGetDomainNameProps): Promise<BatchGetDomainNameReturn | null> {
     if (queryChainIdList?.length && queryTldList?.length) {
       console.warn('queryChainIdList and queryTldList cannot be used together, queryTldList will be ignored')
+    }
+    if (!addressList.length) return []
+    let curAddr = addressList[0]
+    try {
+      // Fetch TLDs from requested chains
+      const tldInfoList = await this.getTldInfoList({ queryChainIdList, queryTldList, rpcUrl })
+      const resList: BatchGetDomainNameReturn = []
+      const isIncludeLens = queryTldList?.includes(TLD.LENS)
+      const isIncludeCrypto = queryTldList?.includes(TLD.CRYPTO)
+      for await (const address of addressList) {
+        curAddr = address
+        // Calculate reverse node and namehash
+        const reverseNode = `${normalize(address).slice(2)}.addr.reverse`
+        const reverseNamehash = namehash(reverseNode)
+        let nameRes: string | null = null
+        for await (const tld of tldInfoList) {
+          if (!tld.tld) continue
+          const isTldName = !!queryTldList?.length
+          nameRes = await this.getDomainNameByTld(address, reverseNamehash, tld, isTldName, rpcUrl)
+          if (nameRes) {
+            break
+          }
+        }
+        if (!nameRes && isIncludeLens) {
+          nameRes = await LensProtocol.getDomainName(address)
+        }
+        if (!nameRes && isIncludeCrypto) {
+          const UD = new UDResolver()
+          nameRes = await UD.getName(address)
+        }
+        resList.push({ address, name: nameRes })
+      }
+      return resList
+    } catch (e) {
+      console.log(`Error getting name for reverse record of ${curAddr}`, e)
+      return null
     }
   }
 
