@@ -27,7 +27,7 @@
     "tsup": "^7.1.0"
   },
   "peerDependencies": {
-    "@bonfida/spl-name-service": "^1.4.0",
+    "@bonfida/spl-name-service": "^2.5.1",
     "@sei-js/core": "^3.1.0",
     "@siddomains/injective-sidjs": "0.0.2-beta",
     "@siddomains/sei-sidjs": "^0.0.4",
