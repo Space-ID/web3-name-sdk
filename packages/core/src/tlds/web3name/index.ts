@@ -16,7 +16,7 @@ type GetDomainNameProps = {
   rpcUrl?: string
 }
 type BatchGetDomainNameProps = { addressList: string[] } & Omit<GetDomainNameProps, 'address'>
-type BatchGetDomainNameReturn = { address: string, name: string | null }[]
+type BatchGetDomainNameReturn = { address: string, domain: string | null }[]
 
 export class Web3Name {
   private contractReader: ContractReader
@@ -187,7 +187,7 @@ export class Web3Name {
           const UD = new UDResolver()
           nameRes = await UD.getName(address)
         }
-        resList.push({ address, name: nameRes })
+        resList.push({ address, domain: nameRes })
       }
       return resList
     } catch (e) {
