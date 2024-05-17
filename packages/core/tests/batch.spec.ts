@@ -15,8 +15,8 @@ describe('SID Name resolving', () => {
       ],
       queryTldList: ['bnb', 'zeta'],
     })
-    expect(res[0].domain).to.be.eq('spaceid.bnb')
-    expect(res[1].domain).to.be.eq('zetans.zeta')
+    expect(res?.at(0)?.domain).to.be.eq('spaceid.bnb')
+    expect(res?.at(0)?.domain).to.be.eq('zetans.zeta')
   }).timeout(120_000)
   it('it should properly batch resolve address based on chain ID', async () => {
     const sid = createWeb3Name()
@@ -27,7 +27,7 @@ describe('SID Name resolving', () => {
       ],
       queryChainIdList: [56, 7000],
     })
-    expect(res[0].domain).to.be.eq('spaceid.bnb')
-    expect(res[1].domain).to.be.eq('zetans.zeta')
+    expect(res?.at(0)?.domain).to.be.eq('spaceid.bnb')
+    expect(res?.at(0)?.domain).to.be.eq('zetans.zeta')
   }).timeout(120_000)
 })
