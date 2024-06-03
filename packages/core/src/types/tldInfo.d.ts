@@ -1,3 +1,6 @@
+import { GetContractReturnType, HttpTransport, PublicClient } from 'viem'
+import { VerifiedTldHubAbi } from '../abi/VerifiedTldHub'
+
 export interface TldInfo {
   tld: string
   identifier: bigint
@@ -6,3 +9,5 @@ export interface TldInfo {
   defaultRpc: string
   sann: `0x${string}`
 }
+
+export type HubContract = GetContractReturnType<typeof VerifiedTldHubAbi, PublicClient<HttpTransport>>
