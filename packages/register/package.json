@@ -1,6 +1,6 @@
 {
   "name": "@web3-name-sdk/register",
-  "version": "0.0.2-beta.3",
+  "version": "0.0.3-beta.1",
   "description": "",
   "main": "dist/index.js",
   "type": "module",
@@ -21,8 +21,7 @@
   "peerDependencies": {
     "@siddomains/sid-contracts": "^0.1.31",
     "@siddomains/sidjs": "^0.1.28",
-    "@web3-name-sdk/core": "^0.1.16",
-    "ethers": "^5.7.2"
+    "@web3-name-sdk/core": "^0.1.16"
   },
   "dependencies": {
     "@siddomains/sid-contracts": "^0.1.31",
