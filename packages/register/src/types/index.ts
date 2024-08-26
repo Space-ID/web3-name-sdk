@@ -1,4 +1,4 @@
-import { PublicClient, WalletClient, Chain, Hex, Address } from 'viem'
+import { PublicClient, WalletClient, Address } from 'viem'
 import { Signer } from 'ethers'
 
 type SupportedChainId = 1 | 56 | 42161 | 97 | 421613
@@ -11,11 +11,11 @@ type SIDRegisterOptions = {
 type SIDRegisterOptionsV3 = {
   publicClient: PublicClient
   walletClient: WalletClient
-  identifier: string,
-  controllerAddr: Address,
-  resolverAddr: Address,
-  simulateAccount?: Address,
-  simulateValue?: string,
+  identifier: string
+  controllerAddr: Address
+  resolverAddr: Address
+  simulateAccount?: Address
+  simulateValue?: string
 }
 
 type RegisterOptions = {
