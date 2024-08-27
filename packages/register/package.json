@@ -21,7 +21,9 @@
   "peerDependencies": {
     "@siddomains/sid-contracts": "^0.1.31",
     "@siddomains/sidjs": "^0.1.28",
-    "@web3-name-sdk/core": "^0.1.16"
+    "@web3-name-sdk/core": "^0.1.16",
+    "ethers": "^5.7.2",
+    "viem": "^2.20.0"
   },
   "dependencies": {
     "@siddomains/sid-contracts": "^0.1.31",
