@@ -59,16 +59,9 @@ export default class SIDRegister {
         address: resolverAddr,
         provider: this.signer.provider,
       })
-      const registrarControllerAddr = await resolverContract.interfaceImplementer(
-        hash,
-        interfaces.permanentRegistrar
-      )
+      const registrarControllerAddr = await resolverContract.interfaceImplementer(hash, interfaces.permanentRegistrar)
       if (this.chainId === 1) {
-        this.registrarController = new Contract(
-          registrarControllerAddr,
-          ensRegisterAbi,
-          this.signer
-        )
+        this.registrarController = new Contract(registrarControllerAddr, ensRegisterAbi, this.signer)
       } else {
         this.registrarController = getRegistrarControllerContract({
           address: registrarControllerAddr,
@@ -83,7 +76,7 @@ export default class SIDRegister {
   }
 
   private async getPublicResolver() {
-    const sid = new SID({ provider: this.signer.provider, sidAddress: this.sidAddress })
+    const sid = new SID.default({ provider: this.signer.provider, sidAddress: this.sidAddress })
     if (this.chainId === 1) {
       return sid.name('resolver.eth').getAddress()
     }
@@ -126,12 +119,7 @@ export default class SIDRegister {
    * @param options.setPrimaryName optional parameter. register and set the domain as primary name. only work for .bnb and .arb domain
    * @param options.onCommitSuccess optional parameter. callback function when the commitment is successful. only required for .eth domain
    */
-  async register(
-    label: string,
-    address: string,
-    year: number,
-    options?: RegisterOptions
-  ): Promise<string> {
+  async register(label: string, address: string, year: number, options?: RegisterOptions): Promise<string> {
     const referrer = options?.referrer
     const setPrimaryName = options?.setPrimaryName
 
