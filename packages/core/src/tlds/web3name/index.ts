@@ -1,4 +1,4 @@
-import { createPublicClient, Hash, http, namehash } from 'viem'
+import { Address, createPublicClient, Hash, http, namehash } from 'viem'
 import { normalize } from 'viem/ens'
 import { TLD } from '../../constants/tld'
 import { getChainFromId, isEthChain, isV2Tld } from '../../utils/common'
@@ -16,12 +16,12 @@ type GetDomainNameProps = {
   rpcUrl?: string
 }
 type BatchGetDomainNameProps = { addressList: string[] } & Omit<GetDomainNameProps, 'address'>
-type BatchGetDomainNameReturn = { address: string, domain: string | null }[]
+type BatchGetDomainNameReturn = { address: string; domain: string | null }[]
 
 export class Web3Name {
   private contractReader: ContractReader
 
-  constructor({ isDev = false, rpcUrl }: { isDev?: boolean, rpcUrl?: string } = {}) {
+  constructor({ isDev = false, rpcUrl }: { isDev?: boolean; rpcUrl?: string } = {}) {
     this.contractReader = new ContractReader(isDev, rpcUrl)
   }
 
@@ -54,7 +54,13 @@ export class Web3Name {
     return await this.contractReader.getTldInfo(reqTlds)
   }
 
-  private async getDomainNameByTld(address: string, reverseNamehash: Hash, tld: TldInfo, isTldName: boolean, rpcUrl?: string) {
+  private async getDomainNameByTld(
+    address: string,
+    reverseNamehash: Hash,
+    tld: TldInfo,
+    isTldName: boolean,
+    rpcUrl?: string
+  ) {
     let name: string | null = null
 
     try {
@@ -68,7 +74,7 @@ export class Web3Name {
             const containsTldNameFunction = await this.contractReader.containsTldNameFunction(
               contract.address,
               tld,
-              rpcUrl,
+              rpcUrl
             )
             if (containsTldNameFunction) {
               name = await contract.read.tldName([reverseNamehash, tld.identifier])
@@ -150,11 +156,11 @@ export class Web3Name {
   }
 
   async batchGetDomainName({
-                             addressList,
-                             queryChainIdList,
-                             queryTldList,
-                             rpcUrl,
-                           }: BatchGetDomainNameProps): Promise<BatchGetDomainNameReturn | null> {
+    addressList,
+    queryChainIdList,
+    queryTldList,
+    rpcUrl,
+  }: BatchGetDomainNameProps): Promise<BatchGetDomainNameReturn | null> {
     if (queryChainIdList?.length && queryTldList?.length) {
       console.warn('queryChainIdList and queryTldList cannot be used together, queryTldList will be ignored')
     }
@@ -206,7 +212,7 @@ export class Web3Name {
    */
   async getAddress(
     name: string,
-    { coinType, rpcUrl }: { coinType?: number; rpcUrl?: string } = {},
+    { coinType, rpcUrl }: { coinType?: number; rpcUrl?: string } = {}
   ): Promise<string | null> {
     const tld = name.split('.').pop()?.toLowerCase()
     if (!tld) {
@@ -449,6 +455,19 @@ export class Web3Name {
     } catch (error) {
       console.error(`Error getting content hash for ${name}`, error)
     }
+  }
+
+  /**
+   * Retrieves the batch of BnB domains for a list of addresses.
+   *
+   * @param {Address[]} addresses - The list of addresses to resolve.
+   * @return {Promise<string[]>} - A promise that resolves to an array of domain names.
+   */
+  async getBatchBnBDomains(addresses: Address[]): Promise<string[]> {
+    if (addresses.length === 0) return []
+    const contract = this.contractReader.getBnBAddressBatchResolverContract()
+    const res = await contract.read.batchResolve([addresses])
+    return [...res]
   }
 
   /**

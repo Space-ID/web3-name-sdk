@@ -11,7 +11,7 @@ import {
   type HttpTransport,
   type PublicClient,
 } from 'viem'
-import { bscTestnet, mainnet } from 'viem/chains'
+import { bscTestnet, mainnet, bsc } from 'viem/chains'
 import { ResolverAbi } from '../abi/Resolver'
 import { ReverseResolverAbi } from '../abi/ReverseResolver'
 import { SANNContractAbi } from '../abi/SANN'
@@ -21,6 +21,8 @@ import { VerifiedTldHubAbi } from '../abi/VerifiedTldHub'
 import { CONTRACTS } from '../constants/contracts'
 import { TldInfo } from '../types/tldInfo'
 import { createCustomClient, getBaseContractFromChainId } from './common'
+import { BnbAddressBatchResolver } from '../abi/bnbAddressBatchResolver'
+import { rpcUrls } from '../constants/chains'
 
 export class ContractReader {
   private isDev: boolean
@@ -55,6 +57,23 @@ export class ContractReader {
     return tldInfoList.filter((e) => !!e.tld)
   }
 
+  /** Get the BnB Address Batch Resolver Domains contract */
+  getBnBAddressBatchResolverContract() {
+    const bscClient = createPublicClient({
+      chain: bsc,
+      transport: http(rpcUrls[bsc.id]),
+    })
+    const contract = getContract({
+      address: CONTRACTS.bnbBatchAddressesResolver,
+      abi: BnbAddressBatchResolver,
+      client: {
+        public: bscClient,
+      },
+    })
+
+    return contract
+  }
+
   /**
    * Get resolver contract by TLD
    *
@@ -67,7 +86,7 @@ export class ContractReader {
   async getResolverContractByTld(
     namehash: Address,
     tldInfo: TldInfo,
-    rpcUrl?: string,
+    rpcUrl?: string
   ): Promise<GetContractReturnType<typeof ResolverAbi, PublicClient<HttpTransport>>> {
     const client = createCustomClient(tldInfo, rpcUrl)
     const registryContract = getContract({
@@ -97,7 +116,7 @@ export class ContractReader {
   async getReverseResolverContract(
     reverseNamehash: Address,
     tldInfo: TldInfo,
-    rpcUrl?: string,
+    rpcUrl?: string
   ): Promise<GetContractReturnType<typeof ReverseResolverAbi, PublicClient<HttpTransport>> | undefined> {
     if (!tldInfo.defaultRpc) return undefined
     const client = createCustomClient(tldInfo, rpcUrl)
@@ -142,7 +161,8 @@ export class ContractReader {
     }
 
     const tldBaseContract = getContract({
-      address: tldBaseContractAddr, abi: TldBaseContractAbi,
+      address: tldBaseContractAddr,
+      abi: TldBaseContractAbi,
       client: {
         public: client,
       },
@@ -180,7 +200,7 @@ export class ContractReader {
     resolverAddr: Address,
     functionName: string,
     tldInfo: TldInfo,
-    rpcUrl?: string,
+    rpcUrl?: string
   ): Promise<boolean> {
     const client = createCustomClient(tldInfo, rpcUrl)
     const bytecode = await client.getBytecode({ address: resolverAddr })
