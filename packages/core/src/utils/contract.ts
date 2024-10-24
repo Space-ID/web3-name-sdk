@@ -21,7 +21,7 @@ import { VerifiedTldHubAbi } from '../abi/VerifiedTldHub'
 import { CONTRACTS } from '../constants/contracts'
 import { TldInfo } from '../types/tldInfo'
 import { createCustomClient, getBaseContractFromChainId } from './common'
-import { BnbAddressBatchResolver } from '../abi/bnbAddressBatchResolver'
+import { BnbAddressBatchResolver } from '../abi/BnbAddressBatchResolver'
 import { rpcUrls } from '../constants/chains'
 
 export class ContractReader {
