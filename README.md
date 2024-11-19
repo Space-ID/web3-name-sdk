@@ -87,7 +87,7 @@ const name = await web3name.getDomainName({
 Domain text records can be fetched by providing domain name and the key. For example, the avatar record of `spaceid.bnb` is returned from this method given key name `avatar`:
 
 ``` typescript
-const record = await sid.getDomainRecord({ name: 'spaceid.bnb', key: 'avatar' })
+const record = await web3Name.getDomainRecord({ name: 'spaceid.bnb', key: 'avatar' })
 ```
 
 #### 5. Metadata
@@ -97,6 +97,31 @@ Domain metadata can be fetched by SDK directly.
 ``` typescript
 // requesting
 const metadata = await web3Name.getMetadata({ name: 'public.gno' })
+```
+
+#### 5. Batch resolve addresses
+
+You need to provide your target chain client and then provide optional parameters in the method. The method returns an list containing the address and its corresponding domain.
+
+``` typescript
+const bnbClient = createPublicClient({
+  chain: bsc,  // input your target chain client
+  transport: http(), 
+  // transport: http('custom rpc url'), 
+})
+const res = await web3Name.batchGetDomainName({
+  addressList: ['0x2886d6792503e04b19640c1f1430d23219af177f', '0xb5932a6b7d50a966aec6c74c97385412fb497540'],
+  queryTldList: ['bnb'],
+  client: bnbClient,
+})
+// expect: [{address: '0x2886d6792503e04b19640c1f1430d23219af177f', domain: 'fiveok.bnb'}, {address: '0xb5932a6b7d50a966aec6c74c97385412fb497540', domain: 'spaceid.bnb'}]
+
+const res = await web3Name.batchGetDomainName({
+  addressList: ['0x2886d6792503e04b19640c1f1430d23219af177f', '0xb5932a6b7d50a966aec6c74c97385412fb497540'],
+  queryChainIdList: [56],
+  client: bnbClient,
+})
+// expect: [{address: '0x2886d6792503e04b19640c1f1430d23219af177f', domain: 'fiveok.bnb'}, {address: '0xb5932a6b7d50a966aec6c74c97385412fb497540', domain: 'spaceid.bnb'}]
 ```
 
 ### Non-EVM name services
