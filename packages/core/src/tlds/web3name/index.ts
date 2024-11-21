@@ -8,9 +8,10 @@ import { validateName } from '../../utils'
 import { UDResolver } from '../UD'
 import { LensProtocol } from '../lens'
 import { TldInfo } from '../../types/tldInfo'
-import { BatchGetDomainNameProps, BatchGetDomainNameReturn, GetDomainNameProps } from '../../types'
+import { BatchGetAddressProps, BatchGetDomainNameProps, BatchGetReturn, GetDomainNameProps } from '../../types'
 import { SIDRegistryAbi } from '../../abi/SIDRegistry'
 import { ResolverAbi } from '../../abi/Resolver'
+import { ReverseResolverAbi } from '../../abi/ReverseResolver'
 
 export class Web3Name {
   private contractReader: ContractReader
@@ -59,10 +60,8 @@ export class Web3Name {
   private async isHasTldNameFunction(address: Address, tld: TldInfo, reverseNamehash: Hash) {
     let containsTldNameFunction
     if (this.resolverContractCache.has(`${address}_${tld.tld}`)) {
-      console.log(1111)
       containsTldNameFunction = this.resolverContractCache.get(`${address}_${tld.tld}`)
     } else {
-      console.log(2222)
       containsTldNameFunction = await this.contractReader.containsTldNameFunction(address, tld)
       this.resolverContractCache.set(`${address}_${tld.tld}`, containsTldNameFunction)
     }
@@ -178,7 +177,7 @@ export class Web3Name {
     addressList,
     queryTld,
     queryChainId,
-  }: BatchGetDomainNameProps): Promise<BatchGetDomainNameReturn | null> {
+  }: BatchGetDomainNameProps): Promise<BatchGetReturn | null> {
     if (queryChainId && queryTld) {
       console.warn('queryChainId and queryTld cannot be used together, queryTld will be ignored')
     }
@@ -258,17 +257,98 @@ export class Web3Name {
           args,
         }
       })
-      const res = (
+      const domainRes = (
         await client.multicall({
           contracts: calls,
         })
       ).map((v: any) => v.result)
-      return res.map((result, index) => ({
-        address: addressList[index],
-        domain: result!,
-      }))
+      const res: BatchGetReturn = []
+      const verifiedRes = await this.batchGetAddress({ nameList: domainRes, queryTld })
+      const verifiedAddress = verifiedRes?.map(({ address }) => address)
+      addressList.map((address, index) => {
+        if (address.toLowerCase() === verifiedAddress?.[index].toLowerCase()) {
+          res.push({
+            address: address,
+            domain: domainRes[index],
+          })
+        }
+      })
+      return res ?? null
     } catch (e) {
       console.log(`Error getting names for addresses`, e)
+      return null
+    }
+  }
+
+  async batchGetAddress({ nameList, queryTld, queryChainId }: BatchGetAddressProps): Promise<BatchGetReturn | null> {
+    if (queryChainId && queryTld) {
+      console.warn('queryChainId and queryTld cannot be used together, queryTld will be ignored')
+    }
+    if (!nameList.length) return []
+    const tldInfoList = await this.getTldInfoList({ queryChainId, queryTld })
+    const tldInfo = tldInfoList.find((tld) => (queryTld ? tld.tld === queryTld : tld.chainId === BigInt(queryChainId!)))
+    if (!tldInfo) {
+      console.log(`queryChainId or queryTld need to be`)
+      return []
+    }
+    const client = createCustomClient(tldInfo)
+    try {
+      const verifiedNames: string[] = nameList.map((name) => {
+        const normalizedDomain = TLD.LENS === tldInfo.tld ? name : normalize(name)
+        const namehash = tldNamehash(normalizedDomain, isV2Tld(tldInfo.tld) ? undefined : tldInfo.identifier)
+        return namehash
+      })
+
+      const reverseContractCalls = verifiedNames.map((namehash) => {
+        return {
+          address: tldInfo.registry,
+          abi: SIDRegistryAbi,
+          functionName: 'resolver',
+          args: [namehash],
+        }
+      })
+
+      const reverseCallRes = (
+        await client.multicall({
+          contracts: reverseContractCalls,
+        })
+      ).map((v: any) => v.result)
+      const reverseContracts = reverseCallRes.map((item, index) => {
+        const contract = getContract({
+          address: item,
+          abi: ResolverAbi,
+          client: {
+            public: client,
+          },
+        })
+        return {
+          ...contract,
+          namehash: verifiedNames[index],
+        }
+      })
+      const getAddressCalls = reverseContracts.map(({ address, abi, namehash }) => {
+        return {
+          address,
+          abi,
+          functionName: 'addr',
+          args: [namehash],
+        }
+      })
+      const addresses = (
+        await client.multicall({
+          contracts: getAddressCalls,
+        })
+      ).map((v: any) => v.result)
+
+      const res = addresses.map((address, index) => {
+        return {
+          address,
+          domain: nameList[index],
+        }
+      })
+      return res
+    } catch (error) {
+      console.log(`Error getting address for names`, error)
       return null
     }
   }
