@@ -15,6 +15,7 @@ import { ResolverAbi } from '../../abi/Resolver'
 export class Web3Name {
   private contractReader: ContractReader
   private resolverContractCache: Map<string, any> = new Map()
+  private tldNameFunctionCache = new Map<string, any>()
 
   constructor({ isDev = false, rpcUrl }: { isDev?: boolean; rpcUrl?: string } = {}) {
     this.contractReader = new ContractReader(isDev, rpcUrl)
@@ -58,8 +59,10 @@ export class Web3Name {
   private async isHasTldNameFunction(address: Address, tld: TldInfo, reverseNamehash: Hash) {
     let containsTldNameFunction
     if (this.resolverContractCache.has(`${address}_${tld.tld}`)) {
+      console.log(1111)
       containsTldNameFunction = this.resolverContractCache.get(`${address}_${tld.tld}`)
     } else {
+      console.log(2222)
       containsTldNameFunction = await this.contractReader.containsTldNameFunction(address, tld)
       this.resolverContractCache.set(`${address}_${tld.tld}`, containsTldNameFunction)
     }
@@ -223,16 +226,29 @@ export class Web3Name {
           reverseNamehash: reverseAddress[index].reverseNamehash,
         }
       })
-      // get tld name function to multicall resolver
-      const tldNameFunctionResults = await Promise.all(
-        resolverContracts.map(async ({ address, reverseNamehash }) => {
+      // get tld name function to resolve
+      const tldNameFunctionResults: {
+        functionName: string
+        reverseNamehash: `0x${string}`
+        args: (bigint | `0x${string}`)[]
+      }[] = []
+      for (const { address, reverseNamehash } of resolverContracts) {
+        const cacheKey = `${address}_${reverseNamehash}`
+        if (this.tldNameFunctionCache.has(cacheKey)) {
+          tldNameFunctionResults.push({
+            ...this.tldNameFunctionCache.get(cacheKey),
+            reverseNamehash,
+          })
+        } else {
           const data = await this.isHasTldNameFunction(address, tldInfo, reverseNamehash)
-          return {
+          this.tldNameFunctionCache.set(cacheKey, data)
+          tldNameFunctionResults.push({
             ...data,
             reverseNamehash,
-          }
-        })
-      )
+          })
+        }
+      }
+      // batch get results
       const calls = resolverContracts.map(({ address, abi, reverseNamehash }) => {
         const { functionName, args } = tldNameFunctionResults.find((item) => item.reverseNamehash === reverseNamehash)!
         return {
