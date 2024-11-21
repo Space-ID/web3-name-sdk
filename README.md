@@ -104,24 +104,19 @@ const metadata = await web3Name.getMetadata({ name: 'public.gno' })
 You need to provide your target chain client and then provide optional parameters in the method. The method returns an list containing the address and its corresponding domain.
 
 ``` typescript
-const bnbClient = createPublicClient({
-  chain: bsc,  // input your target chain client
-  transport: http(), 
-  // transport: http('custom rpc url'), 
-})
 const res = await web3Name.batchGetDomainName({
   addressList: ['0x2886d6792503e04b19640c1f1430d23219af177f', '0xb5932a6b7d50a966aec6c74c97385412fb497540'],
-  queryTldList: ['bnb'],
-  client: bnbClient,
+  queryTld: 'bnb',
+  // or
+  // queryChainIdList: [56],
 })
 // expect: [{address: '0x2886d6792503e04b19640c1f1430d23219af177f', domain: 'fiveok.bnb'}, {address: '0xb5932a6b7d50a966aec6c74c97385412fb497540', domain: 'spaceid.bnb'}]
 
 const res = await web3Name.batchGetDomainName({
-  addressList: ['0x2886d6792503e04b19640c1f1430d23219af177f', '0xb5932a6b7d50a966aec6c74c97385412fb497540'],
-  queryChainIdList: [56],
-  client: bnbClient,
+  addressList: ['0x77777775b611f0f3d90ccb69ef425a62b35afa7c', '0x3506fbe85e19bf025b228ec58f143ba342c3c608'],
+  queryChainId: 42_161,
 })
-// expect: [{address: '0x2886d6792503e04b19640c1f1430d23219af177f', domain: 'fiveok.bnb'}, {address: '0xb5932a6b7d50a966aec6c74c97385412fb497540', domain: 'spaceid.bnb'}]
+// expect: [{address: '0x77777775b611f0f3d90ccb69ef425a62b35afa7c', domain: 'megantrhopus.arb'}, {address: '0x3506fbe85e19bf025b228ec58f143ba342c3c608', domain: 'idgue.arb'}]
 ```
 
 ### Non-EVM name services

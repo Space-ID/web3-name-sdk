@@ -1,7 +1,7 @@
-import { Address, createPublicClient, Hash, http, namehash } from 'viem'
+import { Address, createPublicClient, getContract, Hash, http, namehash } from 'viem'
 import { normalize } from 'viem/ens'
 import { TLD } from '../../constants/tld'
-import { getChainFromId, isEthChain, isV2Tld } from '../../utils/common'
+import { createCustomClient, getChainFromId, isEthChain, isV2Tld } from '../../utils/common'
 import { ContractReader } from '../../utils/contract'
 import { tldNamehash } from '../../utils'
 import { validateName } from '../../utils'
@@ -9,9 +9,12 @@ import { UDResolver } from '../UD'
 import { LensProtocol } from '../lens'
 import { TldInfo } from '../../types/tldInfo'
 import { BatchGetDomainNameProps, BatchGetDomainNameReturn, GetDomainNameProps } from '../../types'
+import { SIDRegistryAbi } from '../../abi/SIDRegistry'
+import { ResolverAbi } from '../../abi/Resolver'
 
 export class Web3Name {
   private contractReader: ContractReader
+  private resolverContractCache: Map<string, any> = new Map()
 
   constructor({ isDev = false, rpcUrl }: { isDev?: boolean; rpcUrl?: string } = {}) {
     this.contractReader = new ContractReader(isDev, rpcUrl)
@@ -53,7 +56,13 @@ export class Web3Name {
   }
 
   private async isHasTldNameFunction(address: Address, tld: TldInfo, reverseNamehash: Hash) {
-    const containsTldNameFunction = await this.contractReader.containsTldNameFunction(address, tld)
+    let containsTldNameFunction
+    if (this.resolverContractCache.has(`${address}_${tld.tld}`)) {
+      containsTldNameFunction = this.resolverContractCache.get(`${address}_${tld.tld}`)
+    } else {
+      containsTldNameFunction = await this.contractReader.containsTldNameFunction(address, tld)
+      this.resolverContractCache.set(`${address}_${tld.tld}`, containsTldNameFunction)
+    }
     const res = {
       functionName: containsTldNameFunction ? 'tldName' : 'name',
       args: containsTldNameFunction ? [reverseNamehash, tld.identifier] : [reverseNamehash],
@@ -164,46 +173,81 @@ export class Web3Name {
 
   async batchGetDomainName({
     addressList,
-    queryTldList,
-    queryChainIdList,
-    client,
+    queryTld,
+    queryChainId,
   }: BatchGetDomainNameProps): Promise<BatchGetDomainNameReturn | null> {
-    if (queryChainIdList && queryTldList) {
-      console.warn('queryChainIdList and queryTldList cannot be used together, queryTldList will be ignored')
+    if (queryChainId && queryTld) {
+      console.warn('queryChainId and queryTld cannot be used together, queryTld will be ignored')
     }
     if (!addressList.length) return []
-    const tldInfoList = await this.getTldInfoList({ queryChainIdList, queryTldList })
-    const tldInfo = tldInfoList.find((tld) =>
-      queryTldList?.length ? tld.tld === queryTldList[0] : tld.chainId === BigInt(queryChainIdList?.[0]!)
-    )
+    const tldInfoList = await this.getTldInfoList({ queryChainId, queryTld })
+    const tldInfo = tldInfoList.find((tld) => (queryTld ? tld.tld === queryTld : tld.chainId === BigInt(queryChainId!)))
     if (!tldInfo) {
-      console.log(`queryChainIdList or queryTldList need to be`)
+      console.log(`queryChainId or queryTld need to be`)
       return []
     }
+    const client = createCustomClient(tldInfo)
     try {
-      const resolveResults = addressList.map(async (address) => {
+      // addr to Hash
+      const reverseAddress = addressList.map((address) => {
         const reverseNode = `${normalize(address).slice(2)}.addr.reverse`
         const reverseNamehash = namehash(reverseNode)
-        const contract = await this.getResolverContract(tldInfo, reverseNamehash)
-        const { functionName, args } = await this.isHasTldNameFunction(contract?.address!, tldInfo, reverseNamehash)
-        const [name] = (
-          await client.multicall({
-            contracts: [
-              {
-                address: contract?.address!,
-                abi: contract?.abi!,
-                // @ts-ignore
-                functionName,
-                // @ts-ignore
-                args,
-              },
-            ],
-          })
-        ).map((v: any) => v.result)
-        return name
+        return {
+          reverseNamehash,
+        }
       })
-      const results = await Promise.all(resolveResults)
-      return results.map((result, index) => ({
+      // get resolver contract by multicall
+      const resolverContractCalls = reverseAddress.map(({ reverseNamehash }) => {
+        return {
+          address: tldInfo.registry,
+          abi: SIDRegistryAbi,
+          functionName: 'resolver',
+          args: [reverseNamehash],
+        }
+      })
+      const resolverAddrCallRes = (
+        await client.multicall({
+          contracts: resolverContractCalls,
+        })
+      ).map((v: any) => v.result)
+      const resolverContracts = resolverAddrCallRes.map((item, index) => {
+        const contract = getContract({
+          address: item,
+          abi: ResolverAbi,
+          client: {
+            public: client,
+          },
+        })
+        return {
+          ...contract,
+          reverseNamehash: reverseAddress[index].reverseNamehash,
+        }
+      })
+      // get tld name function to multicall resolver
+      const tldNameFunctionResults = await Promise.all(
+        resolverContracts.map(async ({ address, reverseNamehash }) => {
+          const data = await this.isHasTldNameFunction(address, tldInfo, reverseNamehash)
+          return {
+            ...data,
+            reverseNamehash,
+          }
+        })
+      )
+      const calls = resolverContracts.map(({ address, abi, reverseNamehash }) => {
+        const { functionName, args } = tldNameFunctionResults.find((item) => item.reverseNamehash === reverseNamehash)!
+        return {
+          address,
+          abi,
+          functionName,
+          args,
+        }
+      })
+      const res = (
+        await client.multicall({
+          contracts: calls,
+        })
+      ).map((v: any) => v.result)
+      return res.map((result, index) => ({
         address: addressList[index],
         domain: result!,
       }))
@@ -212,6 +256,53 @@ export class Web3Name {
       return null
     }
   }
+
+  // async batchGetDomainName({
+  //   addressList,
+  //   queryChainIdList,
+  //   queryTldList,
+  //   rpcUrl,
+  // }: BatchGetDomainNameProps): Promise<BatchGetDomainNameReturn | null> {
+  //   if (queryChainIdList?.length && queryTldList?.length) {
+  //     console.warn('queryChainIdList and queryTldList cannot be used together, queryTldList will be ignored')
+  //   }
+  //   if (!addressList.length) return []
+  //   let curAddr = addressList[0]
+  //   try {
+  //     // Fetch TLDs from requested chains
+  //     const tldInfoList = await this.getTldInfoList({ queryChainIdList, queryTldList, rpcUrl })
+  //     const resList: BatchGetDomainNameReturn = []
+  //     const isIncludeLens = queryTldList?.includes(TLD.LENS)
+  //     const isIncludeCrypto = queryTldList?.includes(TLD.CRYPTO)
+  //     for await (const address of addressList) {
+  //       curAddr = address
+  //       // Calculate reverse node and namehash
+  //       const reverseNode = `${normalize(address).slice(2)}.addr.reverse`
+  //       const reverseNamehash = namehash(reverseNode)
+  //       let nameRes: string | null = null
+  //       for await (const tld of tldInfoList) {
+  //         if (!tld.tld) continue
+  //         const isTldName = !!queryTldList?.length
+  //         nameRes = await this.getDomainNameByTld(address, reverseNamehash, tld, isTldName, rpcUrl)
+  //         if (nameRes) {
+  //           break
+  //         }
+  //       }
+  //       if (!nameRes && isIncludeLens) {
+  //         nameRes = await LensProtocol.getDomainName(address)
+  //       }
+  //       if (!nameRes && isIncludeCrypto) {
+  //         const UD = new UDResolver()
+  //         nameRes = await UD.getName(address)
+  //       }
+  //       resList.push({ address, domain: nameRes })
+  //     }
+  //     return resList
+  //   } catch (e) {
+  //     console.log(`Error getting name for reverse record of ${curAddr}`, e)
+  //     return null
+  //   }
+  // }
 
   /**
    * Get address from name. If coinType is specified, it will return ENSIP-9 address for that coinType.
