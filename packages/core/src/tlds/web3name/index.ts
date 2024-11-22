@@ -207,21 +207,13 @@ export class Web3Name {
           args: [reverseNamehash],
         }
       })
-      const resolverAddrCallRes = (
+      const resolverContract = (
         await client.multicall({
           contracts: resolverContractCalls,
         })
-      ).map((v: any) => v.result)
-      const resolverContracts = resolverAddrCallRes.map((item, index) => {
-        const contract = getContract({
-          address: item,
-          abi: ResolverAbi,
-          client: {
-            public: client,
-          },
-        })
+      ).map((v: any, index) => {
         return {
-          ...contract,
+          address: v.result,
           reverseNamehash: reverseAddress[index].reverseNamehash,
         }
       })
@@ -231,7 +223,7 @@ export class Web3Name {
         reverseNamehash: `0x${string}`
         args: (bigint | `0x${string}`)[]
       }[] = []
-      for (const { address, reverseNamehash } of resolverContracts) {
+      for (const { address, reverseNamehash } of resolverContract) {
         const cacheKey = `${address}_${reverseNamehash}`
         if (this.tldNameFunctionCache.has(cacheKey)) {
           tldNameFunctionResults.push({
@@ -248,11 +240,11 @@ export class Web3Name {
         }
       }
       // batch get results
-      const calls = resolverContracts.map(({ address, abi, reverseNamehash }) => {
+      const calls = resolverContract.map(({ address, reverseNamehash }) => {
         const { functionName, args } = tldNameFunctionResults.find((item) => item.reverseNamehash === reverseNamehash)!
         return {
           address,
-          abi,
+          abi: ResolverAbi,
           functionName,
           args,
         }
@@ -263,13 +255,18 @@ export class Web3Name {
         })
       ).map((v: any) => v.result)
       const res: BatchGetReturn = []
-      const verifiedRes = await this.batchGetAddress({ nameList: domainRes, queryTld })
+      const verifiedRes = await this.batchGetAddress({ nameList: domainRes, queryTld, queryChainId })
       const verifiedAddress = verifiedRes?.map(({ address }) => address)
-      addressList.map((address, index) => {
-        if (address.toLowerCase() === verifiedAddress?.[index].toLowerCase()) {
+      addressList.forEach((address, index) => {
+        if (address.toLowerCase() === verifiedAddress?.[index]?.toLowerCase()) {
           res.push({
-            address: address,
+            address,
             domain: domainRes[index],
+          })
+        } else {
+          res.push({
+            address,
+            domain: null,
           })
         }
       })
@@ -298,8 +295,7 @@ export class Web3Name {
         const namehash = tldNamehash(normalizedDomain, isV2Tld(tldInfo.tld) ? undefined : tldInfo.identifier)
         return namehash
       })
-
-      const reverseContractCalls = verifiedNames.map((namehash) => {
+      const resolveContractCalls = verifiedNames.map((namehash) => {
         return {
           address: tldInfo.registry,
           abi: SIDRegistryAbi,
@@ -307,42 +303,31 @@ export class Web3Name {
           args: [namehash],
         }
       })
-
-      const reverseCallRes = (
+      const resolverContracts = (
         await client.multicall({
-          contracts: reverseContractCalls,
+          contracts: resolveContractCalls,
         })
-      ).map((v: any) => v.result)
-      const reverseContracts = reverseCallRes.map((item, index) => {
-        const contract = getContract({
-          address: item,
-          abi: ResolverAbi,
-          client: {
-            public: client,
-          },
-        })
+      ).map((v: any, index) => {
         return {
-          ...contract,
+          address: v.result,
           namehash: verifiedNames[index],
         }
       })
-      const getAddressCalls = reverseContracts.map(({ address, abi, namehash }) => {
+      const getAddressCalls = resolverContracts.map(({ address, namehash }) => {
         return {
           address,
-          abi,
+          abi: ResolverAbi,
           functionName: 'addr',
           args: [namehash],
         }
       })
-      const addresses = (
+      const res = (
         await client.multicall({
           contracts: getAddressCalls,
         })
-      ).map((v: any) => v.result)
-
-      const res = addresses.map((address, index) => {
+      ).map((v: any, index) => {
         return {
-          address,
+          address: v.result ?? null,
           domain: nameList[index],
         }
       })
