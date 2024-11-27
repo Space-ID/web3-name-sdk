@@ -19,7 +19,7 @@ describe('SID Name resolving', () => {
       addressList: ['0x2886d6792503e04b19640c1f1430d23219af177f', '0xb5932a6b7d50a966aec6c74c97385412fb497540'],
       queryChainId: 56,
     })
-    expect(res?.at(0)?.domain).to.be.eq('goodh.bnb')
+    expect(res?.at(0)?.domain).to.be.eq('88888888ok.bnb')
     expect(res?.at(1)?.domain).to.be.eq('spaceid.bnb')
   }).timeout(120_000)
   it('it should properly batch resolve address based on arb Tld', async () => {

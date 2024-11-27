@@ -182,7 +182,11 @@ export class Web3Name {
    * @return {*}  {(Promise<BatchGetReturn | null>)} - A promise that resolves to an array of objects, each containing the address and its corresponding domain name, or null if an error occurs.
    * @memberof Web3Name
    */
-  private async batchResolve(addressList: Address[], tldInfo: TldInfo): Promise<BatchGetReturn | null> {
+  private async batchResolve(
+    addressList: Address[],
+    tldInfo: TldInfo,
+    isTldName: boolean
+  ): Promise<BatchGetReturn | null> {
     const client = createCustomClient(tldInfo)
     try {
       // addr to Hash
@@ -219,19 +223,31 @@ export class Web3Name {
         args: (bigint | `0x${string}`)[]
       }[] = []
       for (const { address, reverseNamehash } of resolverContract) {
-        const cacheKey = `${address}_${reverseNamehash}`
+        const cacheKey = `${address}_${reverseNamehash}_${isTldName}`
         if (this.tldNameFunctionCache.has(cacheKey)) {
           tldNameFunctionResults.push({
             ...this.tldNameFunctionCache.get(cacheKey),
             reverseNamehash,
           })
         } else {
-          const data = await this.isHasTldNameFunction(address, tldInfo, reverseNamehash)
-          this.tldNameFunctionCache.set(cacheKey, data)
-          tldNameFunctionResults.push({
-            ...data,
-            reverseNamehash,
-          })
+          if (isTldName) {
+            const data = await this.isHasTldNameFunction(address, tldInfo, reverseNamehash)
+            this.tldNameFunctionCache.set(cacheKey, data)
+            tldNameFunctionResults.push({
+              ...data,
+              reverseNamehash,
+            })
+          } else {
+            const data = {
+              functionName: 'name',
+              args: [reverseNamehash],
+            }
+            this.tldNameFunctionCache.set(cacheKey, data)
+            tldNameFunctionResults.push({
+              ...data,
+              reverseNamehash,
+            })
+          }
         }
       }
       // batch get results
@@ -287,7 +303,7 @@ export class Web3Name {
       return null
     }
     try {
-      const res = await this.batchResolve(addressList, tldInfo)
+      const res = await this.batchResolve(addressList, tldInfo, true)
       return res
     } catch (error) {
       console.log('error: ', error)
@@ -309,7 +325,7 @@ export class Web3Name {
       return null
     }
     try {
-      const res = await this.batchResolve(addressList, tldInfo)
+      const res = await this.batchResolve(addressList, tldInfo, false)
       return res
     } catch (error) {
       console.log('error: ', error)
