@@ -98,7 +98,7 @@ const names = await web3name.batchGetDomainName({
 })
 ```
 
-#### 5. Batch resolve addresses
+#### 4. Batch resolve addresses
 
 You need to provide your target chain client and then provide optional parameters in the method. The method returns an list containing the address and its corresponding domain.
 
@@ -116,7 +116,7 @@ const res = await web3Name.batchGetDomainNameByChainId({
 // expect: [{address: '0x77777775b611f0f3d90ccb69ef425a62b35afa7c', domain: 'megantrhopus.arb'}, {address: '0x3506fbe85e19bf025b228ec58f143ba342c3c608', domain: 'idgue.arb'}]
 ```
 
-#### 6. Record
+#### 5. Record
 
 Domain text records can be fetched by providing domain name and the key. For example, the avatar record of `spaceid.bnb` is returned from this method given key name `avatar`:
 
@@ -124,7 +124,7 @@ Domain text records can be fetched by providing domain name and the key. For exa
 const record = await web3name.getDomainRecord({ name: 'spaceid.bnb', key: 'avatar' })
 ```
 
-#### 7. Metadata
+#### 6. Metadata
 
 Domain metadata can be fetched by SDK directly.
 
