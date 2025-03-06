@@ -1,3 +1,4 @@
+import { PaymentIdName } from './tlds/paymentId';
 import { Web3Name } from './tlds/web3name'
 
 /**
@@ -5,4 +6,8 @@ import { Web3Name } from './tlds/web3name'
  */
 export function createWeb3Name({ isDev = false, rpcUrl }: { isDev?: boolean; rpcUrl?: string } = {}): Web3Name {
   return new Web3Name({ isDev, rpcUrl })
+}
+
+export function createPaymentIdName() {
+  return new PaymentIdName()
 }
