@@ -1,6 +1,6 @@
 {
   "name": "@web3-name-sdk/core",
-  "version": "0.3.3-beta.1",
+  "version": "0.3.3-beta.2",
   "description": "One stop Web3 domain name resolution",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
@@ -78,6 +78,16 @@
       "require": {
         "types": "./dist/solName.d.cts",
         "default": "./dist/solName.cjs"
+      }
+    },
+    "./paymentIdName": {
+      "import": {
+        "types": "./dist/paymentIdName.d.ts",
+        "default": "./dist/paymentIdName.js"
+      },
+      "require": {
+        "types": "./dist/paymentIdName.d.cts",
+        "default": "./dist/paymentIdName.cjs"
       }
     },
     "./utils": {
