@@ -3,6 +3,8 @@ import { TldInfo } from '../types/tldInfo'
 import { mainnet, goerli, sepolia } from 'viem/chains'
 
 export function createCustomClient(tldInfo: TldInfo, rpcUrl?: string): PublicClient {
+  const finalRpcUrl = rpcUrl || tldInfo.defaultRpc;
+
   const client = createPublicClient({
     chain: {
       id: Number(tldInfo.chainId),
@@ -23,7 +25,7 @@ export function createCustomClient(tldInfo: TldInfo, rpcUrl?: string): PublicCli
         },
       },
     },
-    transport: http(),
+    transport: http(finalRpcUrl),
     batch: {
       multicall: {
         wait: 10,
