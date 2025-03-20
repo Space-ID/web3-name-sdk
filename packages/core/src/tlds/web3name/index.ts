@@ -760,10 +760,12 @@ export class Web3Name {
    */
   async getDomainAvatar({
     name,
+    key,
     rpcUrl,
     timeout,
   }: {
     name: string
+    key: string
     rpcUrl?: string
     timeout?: number
   }): Promise<string | undefined> {
