@@ -81,6 +81,16 @@
         "default": "./dist/solName.cjs"
       }
     },
+    "./paymentIdName": {
+      "import": {
+        "types": "./dist/paymentIdName.d.ts",
+        "default": "./dist/paymentIdName.js"
+      },
+      "require": {
+        "types": "./dist/paymentIdName.d.cts",
+        "default": "./dist/paymentIdName.cjs"
+      }
+    },
     "./utils": {
       "import": {
         "types": "./dist/utils/index.d.ts",
@@ -107,6 +117,7 @@
       "src/injName.ts",
       "src/seiName.ts",
       "src/solName.ts",
+      "src/paymentIdName.ts",
       "src/utils/index.ts"
     ],
     "splitting": false,
