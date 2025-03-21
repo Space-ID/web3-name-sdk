@@ -13,8 +13,7 @@
     "test": "ts-mocha -p tsconfig.json tests/**/*.spec.ts",
     "test2": "ts-mocha -p tsconfig.json tests/**/sid.spec.ts",
     "test3": "ts-mocha -p tsconfig.json tests/**/sidV3.spec.ts",
-    "testBatch": "ts-mocha -p tsconfig.json tests/**/batch.spec.ts",
-    "testTimeout": "ts-mocha -p tsconfig.json tests/**/timeout.spec.ts"
+    "testBatch": "ts-mocha -p tsconfig.json tests/**/batch.spec.ts"
   },
   "author": "SPACE ID",
   "license": "MIT",
@@ -28,15 +27,17 @@
     "ts-node": "^10.9.1",
     "tsup": "^7.1.0"
   },
-  "dependencies": {
-    "@adraffy/ens-normalize": "^1.10.0",
-    "@ensdomains/ens-validation": "^0.1.0",
+  "peerDependencies": {
     "@bonfida/spl-name-service": "^2.5.1",
     "@sei-js/core": "^3.1.0",
     "@siddomains/injective-sidjs": "0.0.2-beta",
     "@siddomains/sei-sidjs": "^0.0.4",
     "@solana/web3.js": "^1.75.0",
     "viem": "^2.15.1"
+  },
+  "dependencies": {
+    "@adraffy/ens-normalize": "^1.10.0",
+    "@ensdomains/ens-validation": "^0.1.0"
   },
   "exports": {
     ".": {
