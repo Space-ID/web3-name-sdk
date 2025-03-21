@@ -770,7 +770,7 @@ export class Web3Name {
     timeout?: number
   }): Promise<string | undefined> {
     return this.contractReader.withTimeout(async (signal) => {
-      const metadata = await this.getMetadata({ name, rpcUrl })
+      const metadata = await this.getMetadata({ name, rpcUrl, timeout })
       return metadata?.image
     }, timeout)
   }
