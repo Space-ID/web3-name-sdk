@@ -5,6 +5,6 @@ import { InjName } from './tlds/inj'
  * @param {Object} options - Configuration options
  * @param {number} [options.timeout] - Optional timeout in milliseconds for requests
  */
-export function createInjName({ timeout }: { timeout?: number } = {}) {
-  return new InjName({ timeout })
+export function createInjName() {
+  return new InjName()
 }
