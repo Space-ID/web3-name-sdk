@@ -2,19 +2,19 @@ import { createPublicClient, hexToBigInt, hexToString, http, keccak256, stringTo
 import { paymentIdReaderAbi } from "../../abi/paymentId/paymentIdReader"
 import { PaymentIdTld, PaymentIdTldCode } from "../../constants/tld"
 // import { base } from "viem/chains"
-export const BaseTestChain = {
-    id: 84532,
-    name: 'Base Sepolia Testnet',
-    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+export const gravity = {
+    id: 1625,
+    name: 'Gravity Alpha Mainnet',
+    nativeCurrency: { name: 'G', symbol: 'G', decimals: 18 },
     rpcUrls: {
         default: {
-            http: ['https://sepolia.base.org/'],
+            http: ['https://rpc.gravity.xyz'],
         },
     },
     blockExplorers: {
         default: {
-            name: 'Basescan',
-            url: 'https://sepolia.basescan.org',
+            name: 'Gravity Alpha Mainnet explorer',
+            url: 'https://explorer.gravity.xyz',
         },
     },
 }
@@ -33,14 +33,14 @@ function getTldCode(domainName: string): bigint {
 
 export class PaymentIdName {
     private client = createPublicClient({
-        chain: BaseTestChain,
-        transport: http('https://sepolia.base.org/'),
+        chain: gravity,
+        transport: http('https://rpc.gravity.xyz'),
     })
 
     async getAddress({ name, chainId }: { name: string, chainId: number }) {
         try {
             const address = await this.client.readContract({
-                address: '0xcd8E5A0023Cb750B89898BdAf776e26138E76E33',
+                address: '0xb15dc8a61742A3477daaB7bd9fA249A13a8eC9A2',
                 abi: paymentIdReaderAbi,
                 functionName: 'addr',
                 args: [getTokenIdBigint(name), getTldCode(name), BigInt(chainId)]
