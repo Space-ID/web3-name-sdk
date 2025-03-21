@@ -16,6 +16,7 @@ export class InjName {
       })
 
       const name = await injectiveId.getName(address)
+
       return name
     } catch (error) {
       console.error('Error getting SEI domain name', error)
@@ -32,6 +33,7 @@ export class InjName {
         injectiveIdAddress: getInjectiveIDAddress(ChainId.Mainnet),
       })
       const address = await injectiveId.name(name).getAddress()
+      console.error(endpoints.grpc, ChainId.Mainnet, getInjectiveIDAddress(ChainId.Mainnet), address, injectiveId)
       return address
     } catch (error) {
       console.error('Error getting SEI address', error)
