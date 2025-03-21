@@ -1,8 +1,73 @@
-import { createWeb3Name, createPaymentIdName } from '../../../packages/core'
+import { createWeb3Name, createPaymentIdName, } from '../../../packages/core/src'
+import { createSeiName } from '../../../packages/core/src/seiName'
 import { useEffect, useState } from 'react'
 import './App.css'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
+const TIMEOUT_PRESETS = {
+  veryShort: 100, // Intentionally short to test timeout
+  normal: 5000, // Normal timeout (5s)
+  long: 15000, // Long timeout (15s)
+  invalid: -1, // Invalid timeout value
+}
+
+type Protocol = 'EVM' | 'Solana' | 'Sei' | 'Injective'
+type Method = 'getAddress' | 'getDomainName' | 'getMetadata' | 'getContentHash'
+
+type TestCase = {
+  title: string
+  domainName: string
+  address: string
+  protocol: Protocol
+  description: string
+  rpcUrl?: string
+}
+
+const TEST_CASES: Record<string, TestCase> = {
+  evm: {
+    title: 'EVM Test',
+    domainName: 'vitalik.eth',
+    address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+    protocol: 'EVM',
+    description: 'Testing EVM name resolution with timeout parameter',
+  },
+  evmSlow: {
+    title: 'EVM Slow RPC Test',
+    domainName: 'vitalik.eth',
+    address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+    protocol: 'EVM',
+    description: 'Testing EVM with a slow RPC to verify timeout',
+    rpcUrl: 'https://eth-mainnet.nodereal.io/v1/1659dfb40aa24bbb8153a677b98064d7',
+  },
+  evmFake: {
+    title: 'EVM Fake RPC Test',
+    domainName: 'vitalik.eth',
+    address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+    protocol: 'EVM',
+    description: 'Testing EVM with a non-existent RPC to test timeout',
+    rpcUrl: 'https://fake-rpc-endpoint.example.com',
+  },
+  solana: {
+    title: 'Solana Test',
+    domainName: 'bonfida.sol',
+    address: '9qvG1zUp8xF1Bi4m6UdRNby1BAAuaDrUxSpv4CmRRMjL',
+    protocol: 'Solana',
+    description: 'Testing Solana name resolution with timeout parameter',
+  },
+  sei: {
+    title: 'Sei Test',
+    domainName: 'allen.sei',
+    address: 'sei1g9gf07p3v33j4dn988d99nwnf3pxpxj8xvvq6d',
+    protocol: 'Sei',
+    description: 'Testing Sei name resolution with timeout parameter',
+  },
+  injective: {
+    title: 'Injective Test',
+    domainName: 'allen.inj',
+    address: 'inj1g9gf07p3v33j4dn988d99nwnf3pxpxj8n4c5v2',
+    protocol: 'Injective',
+    description: 'Testing Injective name resolution with timeout parameter',
+  },
+}
 
 function App() {
   const [domain, setDomain] = useState('') // 用户输入的域名
@@ -20,11 +85,11 @@ function App() {
       setLoading(true)
       try {
         const web3Name = createWeb3Name()
-        const payMentIdName = createPaymentIdName()
+        const payMentIdName = createSeiName()
 
         const parsedChainId = chainId ? parseInt(chainId, 10) : 1 // 默认使用 1
         const res = domain.includes('@')
-          ? await payMentIdName.getAddress({ name: domain, chainId: parsedChainId })
+          ? await payMentIdName.getAddress({ name: domain })
           : await web3Name.getAddress(domain)
 
         setAddress(res ?? 'Notfound')
@@ -44,14 +109,13 @@ function App() {
   }, [domain, chainId]) // 监听 chainId 变化，实时更新查询
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="dark-theme-container">
+      <div className="header">
+        <h1>Web3Name SDK Timeout Testing</h1>
+        <p className="description">
+          Testing timeout functionality for EVM, Solana, Sei, and Injective protocols. Each protocol supports timeout
+          both during initialization and method calls.
+        </p>
       </div>
       <h1>Vite + React</h1>
 
@@ -80,7 +144,7 @@ function App() {
       </div>
 
       <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-    </>
+    </div>
   )
 }
 
