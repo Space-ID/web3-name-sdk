@@ -1,5 +1,7 @@
+import { createInjName } from '@web3-name-sdk/core/injName';
 import { Web3Name } from './tlds/web3name'
 import { PaymentIdName } from './tlds/paymentId'
+import { InjName } from './tlds/inj';
 
 /**
  * Creates a new instance of Web3Name for EVM based chains
@@ -19,4 +21,8 @@ export function createWeb3Name({
  */
 export function createPaymentIdName() {
   return new PaymentIdName()
+}
+
+export function createInjName() {
+  return new InjName()
 }
