@@ -43,8 +43,8 @@ export class InjName {
         // @ts-ignore
         // const siddomains = await import('@siddomains/injective-sidjs')
         // const InjectiveID = siddomains.default
-        console.log(InjectiveID,'InjectiveID')
-        const injectiveId = new InjectiveID({
+        console.log(InjectiveID,typeof InjectiveID.default,typeof InjectiveID,'InjectiveID')
+        const injectiveId = new InjectiveID.default({
           grpc: endpoints.grpc,
           chainId: ChainId.Mainnet,
           injectiveIdAddress: getInjectiveIDAddress(ChainId.Mainnet),
@@ -66,8 +66,8 @@ export class InjName {
         // @ts-ignore
         // const siddomains = await import('@siddomains/injective-sidjs')
         // const InjectiveID = siddomains.default
-        console.log(InjectiveID,'InjectiveID2')
-        const injectiveId = new InjectiveID({
+        console.log(InjectiveID,typeof InjectiveID,typeof InjectiveID.default,'InjectiveID2')
+        const injectiveId = new InjectiveID.default({
           grpc: endpoints.grpc,
           chainId: ChainId.Mainnet,
           injectiveIdAddress: getInjectiveIDAddress(ChainId.Mainnet),
