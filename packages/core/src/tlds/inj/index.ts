@@ -1,7 +1,7 @@
 // // @ts-ignore
 // import InjectiveID from '@siddomains/injective-sidjs'
 // @ts-ignore
-// import { getInjectiveIDAddress } from '@siddomains/injective-sidjs'
+import { getInjectiveIDAddress } from '@siddomains/injective-sidjs'
 import { getNetworkEndpoints, Network } from '@injectivelabs/networks'
 import { ChainId } from '@injectivelabs/ts-types'
 
@@ -10,7 +10,7 @@ export class InjName {
     try {
       const endpoints = getNetworkEndpoints(Network.Mainnet)
       //@ts-ignore
-      const { InjectiveID, getInjectiveIDAddress } = await import('@siddomains/injective-sidjs')
+      const { InjectiveID } = await import('@siddomains/injective-sidjs').default
       const injectiveId = new InjectiveID({
         grpc: endpoints.grpc,
         chainId: ChainId.Mainnet,
@@ -30,7 +30,7 @@ export class InjName {
     try {
       const endpoints = getNetworkEndpoints(Network.Mainnet)
       //@ts-ignore
-      const { InjectiveID, getInjectiveIDAddress } = await import('@siddomains/injective-sidjs')
+      const { InjectiveID } = await import('@siddomains/injective-sidjs').default
       const injectiveId = new InjectiveID({
         grpc: endpoints.grpc,
         chainId: ChainId.Mainnet,
