@@ -162,6 +162,7 @@ function App() {
         }
         case 'Injective': {
           const injName = createInjName({ timeout: currentTimeout })
+          console.log(injName,'injName')
           switch (currentMethod) {
             case 'getAddress':
               resultValue = await injName.getAddress({ name: currentTest.domainName, timeout: currentTimeout })
