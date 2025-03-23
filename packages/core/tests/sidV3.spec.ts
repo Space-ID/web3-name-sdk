@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised'
 import { createInjName } from '../src/injName'
 import { createSeiName } from '../src/seiName'
 import { createSolName } from '../src/solName'
-
+import 'mocha'
 chai.use(chaiAsPromised)
 
 describe('SID V3 Name resolving', () => {

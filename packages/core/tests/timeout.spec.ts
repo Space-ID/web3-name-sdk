@@ -1,6 +1,6 @@
 import { createWeb3Name } from '@web3-name-sdk/core'
 import { expect } from 'chai'
-
+import 'mocha'
 describe('Timeout Tests', function () {
   let sdk = createWeb3Name({
     timeout: 5000,

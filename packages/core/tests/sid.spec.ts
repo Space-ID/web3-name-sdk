@@ -2,7 +2,7 @@ import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import { createWeb3Name } from '../src'
 import { validateName } from '../src/utils'
-
+import 'mocha'
 chai.use(chaiAsPromised)
 
 describe('SID Name resolving', () => {

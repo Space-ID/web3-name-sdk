@@ -1,7 +1,7 @@
 import chai, { expect } from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import { createWeb3Name } from '../src'
-
+import 'mocha'
 chai.use(chaiAsPromised)
 const sid = createWeb3Name()
 

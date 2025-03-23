@@ -37,3 +37,16 @@ export interface Web3NameOptions {
   rpcUrl?: string
   timeout?: number
 }
+
+declare module '@web3-name-sdk/core' {
+  export function createWeb3Name(options: { timeout: number }): {
+    getAddress(name: string, options: { rpcUrl: string, timeout: number }): Promise<any>;
+    getMetadata(options: { name: string, rpcUrl: string, timeout: number }): Promise<any>;
+    getContentHash(options: { name: string, rpcUrl: string, timeout: number }): Promise<any>;
+  };
+}
+declare module '@siddomains/sei-sidjs' {
+  export interface SEISid { /* 类型定义 */ }
+  const seiSid: SEISid;
+  export default seiSid;
+}

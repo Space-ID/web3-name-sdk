@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { countCharacters } from '../src/utils/validate'
-
+import 'mocha'
 describe('toArray', () => {
   it('should convert strings to arrays', () => {
     expect(countCharacters('αβγδεζηθ')).to.equal(8)
