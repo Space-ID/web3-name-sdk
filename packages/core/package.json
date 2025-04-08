@@ -1,6 +1,6 @@
 {
   "name": "@web3-name-sdk/core",
-  "version": "0.4.1",
+  "version": "0.4.1-beta.1",
   "description": "One stop Web3 domain name resolution",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
@@ -34,7 +34,8 @@
     "@siddomains/injective-sidjs": "0.0.2-beta",
     "@siddomains/sei-sidjs": "^0.0.4",
     "@solana/web3.js": "^1.75.0",
-    "viem": "^2.23.12"
+    "viem": "^2.23.12",
+    "@coral-xyz/anchor": "^0.30.1"
   },
   "dependencies": {
     "@adraffy/ens-normalize": "^1.10.0",
@@ -89,6 +90,16 @@
       "require": {
         "types": "./dist/paymentIdName.d.cts",
         "default": "./dist/paymentIdName.cjs"
+      }
+    },
+    "./caName": {
+      "import": {
+        "types": "./dist/caName.d.ts",
+        "default": "./dist/caName.js"
+      },
+      "require": {
+        "types": "./dist/caName.d.cts",
+        "default": "./dist/caName.cjs"
       }
     },
     "./utils": {
