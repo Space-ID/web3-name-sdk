@@ -8,14 +8,14 @@ const PROGRAM_ID = new PublicKey("DJSovpN5v7g3Hqw89oT7AmaRMp4RTPJ1v1UUxQM86hut")
 export class CaName {
     private program: Program;
 
-    constructor(rpcUrl?: string) {
+    constructor() {
         const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
         //@ts-ignore
         this.program = new Program(idl, { connection });
     }
 
 
-    async getAddress({ name, chainId }: { name: string; chainId: number }) {
+    async getAddress({ name }: { name: string; chainId: number }) {
         const DOMAIN_RECORD_SEED = Buffer.from("domain");
 
         const [domainRecordAccount] = anchor.web3.PublicKey.findProgramAddressSync(
