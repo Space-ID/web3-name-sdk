@@ -215,7 +215,6 @@ function App() {
 						case "getAddress":
 							resultValue = await caName.getAddress({
 								name: currentTest.domainName,
-								chainId: 2,
 							});
 							break;
 					}

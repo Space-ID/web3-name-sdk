@@ -15,7 +15,7 @@ export class CaName {
     }
 
 
-    async getAddress({ name }: { name: string; chainId: number }) {
+    async getAddress({ name }: { name: string }) {
         const DOMAIN_RECORD_SEED = Buffer.from("domain");
 
         const [domainRecordAccount] = anchor.web3.PublicKey.findProgramAddressSync(
