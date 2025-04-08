@@ -1,5 +1,6 @@
 import { Web3Name } from './tlds/web3name'
 import { PaymentIdName } from './tlds/paymentId'
+import { CaName } from './tlds/ca';
 
 /**
  * Creates a new instance of Web3Name for EVM based chains
@@ -17,4 +18,8 @@ export function createWeb3Name({
  */
 export function createPaymentIdName() {
   return new PaymentIdName()
+}
+
+export function createCaName() {
+  return new CaName()
 }
