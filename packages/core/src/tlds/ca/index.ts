@@ -26,6 +26,6 @@ export class CaName {
         //@ts-ignore
         const record = await this.program.account.domainRecord.fetch(domainRecordAccount);
         console.log("Domain Record Account: ", record);
-        return record.addresses[0]?.address;
+        return record.addresses[0];
     }
 }
