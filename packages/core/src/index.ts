@@ -1,6 +1,11 @@
 import { Web3Name } from './tlds/web3name'
 import { PaymentIdName } from './tlds/paymentId'
 
+export { Web3Name } from './tlds/web3name'
+export { UDResolver } from './tlds/UD'
+export { LensProtocol } from './tlds/lens'
+export { FourResolver } from './tlds/four'
+
 /**
  * Creates a new instance of Web3Name for EVM based chains
  */

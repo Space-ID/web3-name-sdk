@@ -9,6 +9,7 @@ export enum TLD {
   LENS = 'lens',
   CRYPTO = 'crypto',
   SOL = 'sol',
+  FOUR = 'four',
 }
 
 export enum PaymentIdTld {

@@ -7,6 +7,7 @@ import { tldNamehash } from '../../utils'
 import { validateName } from '../../utils'
 import { UDResolver } from '../UD'
 import { LensProtocol } from '../lens'
+import { FourResolver } from '../four'
 import { TldInfo } from '../../types/tldInfo'
 import { BatchGetDomainNameProps, BatchGetReturn, GetDomainNameProps } from '../../types'
 import { SIDRegistryAbi } from '../../abi/SIDRegistry'
@@ -190,6 +191,10 @@ export class Web3Name {
           const UD = new UDResolver()
           const udName = await UD.getName(address)
           if (udName) resList.push(udName)
+        } else if (queryTldList?.includes(TLD.FOUR)) {
+          const fourResolver = new FourResolver({ timeout })
+          const fourName = await fourResolver.getName(address)
+          if (fourName) resList.push(fourName)
         }
 
         return resList.at(0) ?? null
@@ -480,6 +485,10 @@ export class Web3Name {
             const UD = new UDResolver()
             nameRes = await UD.getName(address)
           }
+          if (!nameRes && queryTldList?.includes(TLD.FOUR)) {
+            const fourResolver = new FourResolver({ timeout })
+            nameRes = await fourResolver.getName(address)
+          }
           resList.push({ address, domain: nameRes })
         }
         return resList
@@ -509,7 +518,7 @@ export class Web3Name {
       }
       const normalizedDomain = TLD.LENS === tld ? name : normalize(name)
 
-      if (tld !== TLD.ENS && tld !== TLD.LENS && tld !== TLD.CRYPTO) {
+      if (tld !== TLD.ENS && tld !== TLD.LENS && tld !== TLD.CRYPTO && tld !== TLD.FOUR) {
         validateName(normalizedDomain)
       }
 
@@ -542,6 +551,11 @@ export class Web3Name {
         if (tld === TLD.CRYPTO) {
           const UD = new UDResolver()
           return await UD.getAddress(name)
+        }
+
+        if (tld === TLD.FOUR) {
+          const fourResolver = new FourResolver({ timeout })
+          return await fourResolver.getAddress(name)
         }
 
         // Get TLD info from verified TLD hub
@@ -671,6 +685,10 @@ export class Web3Name {
         } else if (queryTldList?.includes(TLD.CRYPTO)) {
           const UD = new UDResolver()
           const name = await UD.getName(address)
+          name && resList.add(name)
+        } else if (queryTldList?.includes(TLD.FOUR)) {
+          const fourResolver = new FourResolver({ timeout })
+          const name = await fourResolver.getName(address)
           name && resList.add(name)
         }
 
