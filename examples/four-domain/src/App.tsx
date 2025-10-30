@@ -1,4 +1,4 @@
-import { FourResolver, Web3Name } from '@web3-name-sdk/core'
+import { FourResolver, Web3Name } from './lib'
 import { useState } from 'react'
 import './App.css'
 

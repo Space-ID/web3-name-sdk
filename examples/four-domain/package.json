@@ -10,7 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@web3-name-sdk/core": "file:./web3-name-sdk-core-0.4.1.tgz",
+    "@adraffy/ens-normalize": "^1.10.0",
+    "@ensdomains/ens-validation": "^0.1.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.1",
     "react": "^18.2.0",
