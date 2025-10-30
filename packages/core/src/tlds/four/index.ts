@@ -59,9 +59,6 @@ export class FourResolver {
         })
 
         const result = await contract.read.getDomainInfo([domainName])
-
-        // result 现在是一个 DomainInfo 结构体，包含 { owner, caAddress, registeredAt, exists }
-        // 根据你的描述，第二个元素（caAddress）是我们需要的地址
         if (result && typeof result === 'object') {
           const { owner, caAddress, registeredAt, exists } = result as {
             owner: string
@@ -70,7 +67,6 @@ export class FourResolver {
             exists: boolean
           }
 
-          // 检查域名是否存在且有效的 caAddress
           if (exists && caAddress && caAddress !== '0x0000000000000000000000000000000000000000') {
             return caAddress
           }
