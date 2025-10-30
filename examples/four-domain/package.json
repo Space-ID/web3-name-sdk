@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@web3-name-sdk/core": "file:../../packages/core",
+    "@web3-name-sdk/core": "file:./web3-name-sdk-core-0.4.1.tgz",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.1",
     "react": "^18.2.0",
